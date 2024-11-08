@@ -69,7 +69,7 @@ public class StoryManager : MonoBehaviour
         {
             if (scene.sceneName == sceneName)
             {
-                Debug.Log("Scene Name: " + scene.sceneName);  // 씬 이름 출력
+                //Debug.Log("Scene Name: " + scene.sceneName);  // 씬 이름 출력
                 foreach (var dialogue in scene.dialogues)
                 {
                     yield return StartCoroutine(ShowDialogueCoroutine(dialogue.name, dialogue.dialogue)); // await 추가

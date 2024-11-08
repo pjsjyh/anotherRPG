@@ -18,7 +18,6 @@ namespace SettingAccountManager
 
             var playerInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse["playerinfo"].ToString());
 
-            Debug.Log("Response: " + playerInfo);
             var characterJson = playerInfo["character"].ToString();
             
             // 다시 JSON으로 파싱

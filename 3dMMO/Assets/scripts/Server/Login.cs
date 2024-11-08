@@ -53,7 +53,6 @@ namespace LoginManager
                     }
                     else
                     {
-                        Debug.Log("No error found. Processing success response.");
                         await SettingAccount.DoSettingAccount(responseBody); // 비동기 메서드로 처리
                         response.Dispose();
                         return true;

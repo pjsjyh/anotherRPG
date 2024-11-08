@@ -2,7 +2,7 @@ namespace ApiUtilities
 {
     public class ApiUrls
     {
-        public static string BaseUrl = "https://rpg.chamchipack.com";
+        public static string BaseUrl = System.Environment.GetEnvironmentVariable("RPG_GAME_URL");
         //public static string BaseUrl = "http://localhost:8080";
         public static string SetUrl = BaseUrl + "/set";
 

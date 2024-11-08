@@ -3,8 +3,8 @@
 
 # But do not ignore the Assets folder and its Scripts folder
 !/3dMMO/Assets/
-!/3dMMO/Assets/scripts/
-!/3dMMO/Assets/scripts/**/*.cs
+!/3dMMO/Assets/Scripts/
+!/3dMMO/Assets/Scripts/**/*.cs
 
 # Ignore meta files except in the Scripts folder
 /3dMMO/Assets/**/*.meta
