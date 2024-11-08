@@ -1,0 +1,18 @@
+# Ignore everything in the 3dMMO project
+/3dMMO/*
+
+# But do not ignore the Assets folder and its Scripts folder
+!/3dMMO/Assets/scripts/
+!/3dMMO/Assets/scripts/**/*.cs
+
+# Ignore meta files except in the Scripts folder
+/3dMMO/Assets/**/*.meta
+!/3dMMO/Assets/Scripts/**/*.meta
+
+# Ignore generated project files and other build artifacts
+/3dMMO/Library/
+/3dMMO/Temp/
+/3dMMO/Obj/
+/3dMMO/Build/
+/3dMMO/Builds/
+/3dMMO/Logs/
