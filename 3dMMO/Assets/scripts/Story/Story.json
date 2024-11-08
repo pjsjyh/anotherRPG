@@ -1,0 +1,30 @@
+{
+    "story": [
+        {
+            "sceneName": "Intro",
+            "dialogues": [
+                {
+                    "name": "John",
+                    "dialogue": "Welcome to the adventure!"
+                },
+                {
+                    "name": "Anna",
+                    "dialogue": "Are you ready to start?"
+                }
+            ]
+        },
+        {
+            "sceneName": "Quest1",
+            "dialogues": [
+                {
+                    "name": "Quest Master",
+                    "dialogue": "Your first task is ahead."
+                },
+                {
+                    "name": "Player",
+                    "dialogue": "I'm ready!"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "quest0": [
+        {
+            "id": "0-1",
+            "title": "Lookfor around!",
+            "dialogue": "You have to get 3blue potion(kill blue monster)",
+            "reward": "300"
+        },
+        {
+            "id": "0-2",
+            "title": "MainFirst",
+            "dialogue": "You have to get 3blue potion",
+            "reward": "300"
+        }
+    ]
+}

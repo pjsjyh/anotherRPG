@@ -2,6 +2,7 @@
 /3dMMO/*
 
 # But do not ignore the Assets folder and its Scripts folder
+!/3dMMO/Assets/
 !/3dMMO/Assets/scripts/
 !/3dMMO/Assets/scripts/**/*.cs
 
