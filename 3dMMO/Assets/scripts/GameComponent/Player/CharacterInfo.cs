@@ -10,13 +10,16 @@ namespace CharacterInfo
         public int _mp;
         public int _money;
         public int _level;
+
     };
     public struct ChaInfoOther
     {
-        public int _hp;
-        public int _mp;
-        public int _money;
-        public int _level;
+        public int _attack;
+        public int _defense;
+        public int _critical;
+        public int _speed;
+        public int _luck;
+        public int _gem;
     }
     public struct SkillInfo
     {
@@ -66,6 +69,7 @@ namespace CharacterInfo
             myCharacterOther = playerInfo;
             _username = username;
         }
+        
         public void AddQuest(string id, string questType, int requiredAmount)
         {
 

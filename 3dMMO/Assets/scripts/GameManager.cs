@@ -39,10 +39,12 @@ public class GameManager : MonoBehaviour
         {
             ChaInfoOther managerInfo = new ChaInfoOther
             {
-                _hp = 100,
-                _mp = 100,
-                _money = 999999,
-                _level = 99999
+                 _attack=9999,
+                _defense=9999,
+                _critical=9999,
+                _speed=100,
+                _luck=9999,
+                _gem=0
             };
 
             CharacterManager.Instance.InitializePlayer(managerInfo, "manager", 100, 100, 999999, 999);

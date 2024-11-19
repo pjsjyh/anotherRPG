@@ -16,7 +16,8 @@ var once sync.Once
 func InitDB() {
 	once.Do(func() {
 		var err error
-		dsn := "host=localhost port=5432 user=postgres password=000105 dbname=rpg sslmode=disable"
+		dsn := "host=localhost port=5432 user=postgres password=000105 dbname=rpg_game  sslmode=disable"
+		//dsn := "host=localhost port=5432 user=postgres password=000105 dbname=rpg sslmode=disable"
 		DB, err = sql.Open("postgres", dsn)
 		if err != nil {
 			log.Fatal("Failed to connect to the database:", err)

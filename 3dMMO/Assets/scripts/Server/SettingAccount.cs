@@ -28,10 +28,11 @@ namespace SettingAccountManager
                 // 기본값으로 초기화
                 characterData = new ChaInfoOther
                 {
-                    _money = 0,
-                    _hp = 100,
-                    _mp = 50,
-                    _level = 1
+                    _attack = 1,
+                    _defense = 1,
+                    _critical = 1,
+                    _speed = 1,
+                    _luck = 1
                     // 다른 필드들도 기본값으로 설정
                 };
             }

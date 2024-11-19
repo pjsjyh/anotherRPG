@@ -18,6 +18,14 @@ type CharacterInfo struct {
 	MP    int `json:"_mp"`
 	Money int `json:"_money"`
 }
+type CharacterInfo2 struct {
+	Attack   int `json:"_attack"`
+	Defense  int `json:"_defense"`
+	Critical int `json:"_critical"`
+	Speed    int `json:"_speed"`
+	Luck     int `json:"_luck"`
+	Gem      int `json:"_gem"`
+}
 type SkillInfo struct {
 	Attack1 int `json:"_attack1"`
 	Attack2 int `json:"_attack2"`
@@ -85,10 +93,11 @@ func Register(c *gin.Context) {
 }
 
 func createPlayerInfoInDB(id string) {
-	characterinfo := CharacterInfo{Level: 1, HP: 100, MP: 100, Money: 0}
+	//characterinfo := CharacterInfo{Level: 1, HP: 100, MP: 100, Money: 0}
+	characterinfo2 := CharacterInfo2{Attack: 10, Defense: 5, Critical: 0, Speed: 1, Luck: 1, Gem: 0}
 	//skillinfo := SkillInfo{Attack1: 0, Attack2: 0, Attack3: 0, Attack4: 0}
 
-	characterInfojsonData, err := json.Marshal(characterinfo)
+	characterInfojsonData, err := json.Marshal(characterinfo2)
 	if err != nil {
 		log.Fatal(err)
 	}
