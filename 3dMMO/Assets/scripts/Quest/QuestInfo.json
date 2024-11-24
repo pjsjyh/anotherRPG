@@ -1,11 +1,12 @@
 {
     "quest0": [
-        {
-            "id": "0-1",
-            "title": "Lookfor around!",
-            "dialogue": "You have to get 3blue potion(kill blue monster)",
-            "reward": "300"
-        },
+      {
+        "id": "0-1",
+        "title": "Lookfor around!",
+        "dialogue": "You have to get 3blue potion(kill blue monster)",
+        "reward": "300",
+        "uuid": "0e7e50d2-7e76-43d7-a49b-ca2f97d5bbee"
+      },
         {
             "id": "0-2",
             "title": "MainFirst",
