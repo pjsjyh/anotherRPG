@@ -4,6 +4,8 @@ using UnityEngine;
 using System.IO;
 using System.Threading.Tasks;
 using TMPro;
+using Quest;
+
 public class StoryManager : MonoBehaviour
 {
     public GameObject chatUI;
@@ -21,6 +23,7 @@ public class StoryManager : MonoBehaviour
     {
         public string sceneName;
         public List<Dialogue> dialogues;
+        public string quest;
     }
 
     [System.Serializable]
@@ -65,10 +68,12 @@ public class StoryManager : MonoBehaviour
         // 이 Json데이터를 역직렬화하여 playerData에 넣어줌
         StoryContainer storyData = JsonUtility.FromJson<StoryContainer>(jsonData);
         chatUI.SetActive(true);
+        string questid="";
         foreach (var scene in storyData.story)
         {
             if (scene.sceneName == sceneName)
             {
+                questid = scene.quest;
                 //Debug.Log("Scene Name: " + scene.sceneName);  // 씬 이름 출력
                 foreach (var dialogue in scene.dialogues)
                 {
@@ -78,7 +83,11 @@ public class StoryManager : MonoBehaviour
             }
         }
         chatUI.SetActive(false);
+        if (questid != "")
+        {
+            QuestManager.Instance.GetQuestByID(questid);
 
+        }
     }
     public IEnumerator ShowDialogueCoroutine(string name, string description)
     {

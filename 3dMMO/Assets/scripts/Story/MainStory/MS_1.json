@@ -1,38 +1,42 @@
-{
+﻿{
     "story": [
-        {
-            "sceneName": "MainFirst",
-            "dialogues": [
-                {
-                    "name": "James",
-                    "dialogue": "Welcome, warrior."
-                },
-                {
-                    "name": "James",
-                    "dialogue": "I really hope you save the princess."
-                },
-                {
-                    "name": "James",
-                    "dialogue": "Before that, take a look around the village."
-                },
-                {
-                    "name": "James",
-                    "dialogue": "Have a nice day!"
-                }
-            ]
-        },
-        {
-            "sceneName": "Quest1",
-            "dialogues": [
-                {
-                    "name": "Quest Master",
-                    "dialogue": "Your first task is ahead."
-                },
-                {
-                    "name": "Player",
-                    "dialogue": "I'm ready!"
-                }
-            ]
-        }
+      {
+        "sceneName": "MainFirst",
+        "dialogues": [
+          {
+            "name": "촌장",
+            "dialogue": "어서오게 전사여."
+          },
+          {
+            "name": "촌장",
+            "dialogue": "저희는 전사님이 공주님을 구해주셨으면 좋겠어요."
+          },
+          {
+            "name": "촌장",
+            "dialogue": "하지만 아직 수련이 부족하시죠...일단 마을을 둘러보세요."
+          },
+          {
+            "name": "촌장",
+            "dialogue": "좋은 하루가 되시길!"
+          }
+        ],
+        "quest": "ffb48950-2049-4e35-a3a2-e691a54cda0d",
+        "storyNum":  0
+      },
+      {
+        "sceneName": "Quest1",
+        "dialogues": [
+          {
+            "name": "Quest Master",
+            "dialogue": "Your first task is ahead."
+          },
+          {
+            "name": "Player",
+            "dialogue": "I'm ready!"
+          }
+        ],
+        "quest": "non",
+        "storyNum": 1
+      }
     ]
 }

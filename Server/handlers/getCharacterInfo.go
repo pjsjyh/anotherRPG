@@ -14,6 +14,7 @@ type GetPlayerInfo struct {
 	Attributes string `json:"character"`
 	PlayerID   string
 	Username   string
+	Storynum   string
 }
 
 func GetCharacterInfo(id, username string) GetPlayerInfo {

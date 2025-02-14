@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
-using Quest;
 public class MainStoryFirst : StoryManager
 {
     public GameObject personOld;
@@ -10,7 +9,6 @@ public class MainStoryFirst : StoryManager
     {
         await MainQuestStart();
         StartCoroutine(MoveAndLookAtTarget(new Vector3(7, 0, 1)));
-        QuestManager.Instance.PopupQuest(true, "quest0", "0-1", "0");
     }
     async public Task MainQuestStart()
     {

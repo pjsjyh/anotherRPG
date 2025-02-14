@@ -22,9 +22,11 @@ public class QuestList
 public class QuestSetting : StoryManager
 {
 
+    public GameObject questPrefab;
+    public GameObject questParent;
     public void SettingQuestUI(string title, string description, string reward)
     {
-    }
+    }                                                                               
     public void ClickQuest()
     {
 

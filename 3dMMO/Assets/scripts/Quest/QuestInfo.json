@@ -1,10 +1,10 @@
-{
+﻿{
     "quest0": [
       {
         "id": "0-1",
-        "title": "Lookfor around!",
-        "dialogue": "You have to get 3blue potion(kill blue monster)",
-        "reward": "300",
+        "title": "마을을 탐방해보자.",
+        "dialogue": "마을을 탐방하며 주변 사람들에게 말을 걸어보자.",
+        "reward": "100",
         "uuid": "0e7e50d2-7e76-43d7-a49b-ca2f97d5bbee"
       },
         {

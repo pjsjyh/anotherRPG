@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using ApiUtilities;
 using MyServerManager;
 using SettingAccountManager;
-
+using Newtonsoft.Json.Linq;
 namespace LoginManager
 {
     public class Login
@@ -41,27 +41,46 @@ namespace LoginManager
                 if (response.result == UnityWebRequest.Result.Success)
                 {
                     string responseBody = response.downloadHandler.text;
-                    Debug.Log(responseBody);
-                    // JSON 응답을 분석하여 처리
-                    if (responseBody.Contains("error_type"))
+                    Debug.Log("서버 응답: " + responseBody); // 서버 응답 로그 출력
+
+                    try
                     {
-                        Debug.Log("Error detected in response.");
+                        JObject jsonResponse = JObject.Parse(responseBody); // JSON 파싱
+
+                        if (jsonResponse.ContainsKey("error_type")) // 서버에서 오류 발생
+                        {
+                            string errorMessage = jsonResponse["message"]?.ToString() ?? "로그인에 실패했습니다."; // 오류 메시지 가져오기
+                            Debug.LogWarning("Error detected: " + errorMessage); // 로그 출력
+                            duplicateErrorText.gameObject.SetActive(true);
+                            duplicateErrorText.text = errorMessage; // 오류 메시지를 UI에 표시
+                            response.Dispose();
+                            return false;
+                        }
+                        else
+                        {
+                            await SettingAccount.DoSettingAccount(responseBody); // 성공 시 계정 설정
+                            response.Dispose();
+                            return true;
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Debug.LogError("JSON 파싱 오류: " + ex.Message);
                         duplicateErrorText.gameObject.SetActive(true);
-                        duplicateErrorText.text = "failed login";
+                        duplicateErrorText.text = "서버 응답 처리 중 오류 발생";
                         response.Dispose();
                         return false;
-                    }
-                    else
-                    {
-                        await SettingAccount.DoSettingAccount(responseBody); // 비동기 메서드로 처리
-                        response.Dispose();
-                        return true;
                     }
                 }
                 else
                 {
-                    Debug.LogError("Error: HTTP Response Code " + response.responseCode);
+                    string errorResponse = response.downloadHandler.text; // 서버의 오류 응답을 확인
+                    Debug.LogError("HTTP Response Code: " + response.responseCode);
                     Debug.LogError("Error Details: " + response.error);
+                    Debug.LogError("Server Response: " + errorResponse);
+
+                    duplicateErrorText.gameObject.SetActive(true);
+                    duplicateErrorText.text = "없는 정보입니다.";
                     response.Dispose();
                     return false;
                 }

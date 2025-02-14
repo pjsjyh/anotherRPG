@@ -19,9 +19,10 @@ namespace SettingAccountManager
             var playerInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse["playerinfo"].ToString());
 
             var characterJson = playerInfo["character"].ToString();
-            
+            CharacterManager.Instance.characterPersonalinfo.charater_id = jsonResponse["charaterID"].ToString();
+          
             // 다시 JSON으로 파싱
-            Debug.Log(characterJson);
+            Debug.Log(jsonResponse);
             ChaInfoOther characterData;
             if (string.IsNullOrWhiteSpace(characterJson))
             {
@@ -47,6 +48,13 @@ namespace SettingAccountManager
             var playerMoney = int.Parse(playerInfo["Money"].ToString());
             var playerLevel = int.Parse(playerInfo["Level"].ToString());
             var playerName = playerInfo["Username"].ToString();
+            int storyNum;
+            bool isParsed = int.TryParse(playerInfo["Storynum"].ToString(), out storyNum);
+
+            if (isParsed)
+            {
+                CharacterManager.Instance.characterPersonalinfo.storyNum = storyNum;
+            }
             CharacterManager.Instance.InitializePlayer(characterData, playerName, playerHP, playerMp, playerMoney, playerLevel);
 
 

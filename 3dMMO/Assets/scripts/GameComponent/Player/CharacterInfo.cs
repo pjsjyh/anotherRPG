@@ -35,13 +35,18 @@ namespace CharacterInfo
         public int _requiredAmount;
         public string _questType;
     };
-
+    public struct CharacterPersonalInfo
+    {
+        public string charater_id;
+        public int storyNum;
+    }
     public class CharacterManager
     {
         private static CharacterManager instance;
         public ChaInfo myCharacter;
         public ChaInfoOther myCharacterOther;
         public List<QuestInfo> questInfo;
+        public CharacterPersonalInfo characterPersonalinfo;
         public string _username = "";
         // private 생성자: 외부에서 인스턴스 생성 불가능
         private CharacterManager() { }

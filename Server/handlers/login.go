@@ -23,11 +23,17 @@ func Login(c *gin.Context) {
 		var getUserName string
 		err := db.DB.QueryRow("SELECT username FROM auth WHERE player_id = $1", id).Scan(&getUserName)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Account Error"})
+			c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Account Error1"})
+			return
+		}
+		var characterID string
+		err2 := db.DB.QueryRow("SELECT character_id FROM character WHERE player_id = $1", id).Scan(&characterID)
+		if err2 != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Account Error2"})
 			return
 		}
 		var getplayerinfo GetPlayerInfo = GetCharacterInfo(id, getUserName)
-		c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Login successful", "playerinfo": getplayerinfo})
+		c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Login successful", "playerinfo": getplayerinfo, "charaterID": characterID})
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Invalid username or password"})
 		return

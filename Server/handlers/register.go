@@ -84,15 +84,15 @@ func Register(c *gin.Context) {
 		return
 	}
 	//캐릭터 정보 생성
-	createPlayerInfoInDB(id)
+	characterID := createPlayerInfoInDB(id)
 	var getplayerinfo GetPlayerInfo = GetCharacterInfo(id, username)
 	fmt.Println(getplayerinfo)
 	// 성공적으로 저장되었을 때
-	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Registration successful", "playerinfo": getplayerinfo})
+	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Registration successful", "playerinfo": getplayerinfo, "charaterID": characterID})
 
 }
 
-func createPlayerInfoInDB(id string) {
+func createPlayerInfoInDB(id string) string {
 	//characterinfo := CharacterInfo{Level: 1, HP: 100, MP: 100, Money: 0}
 	characterinfo2 := CharacterInfo2{Attack: 10, Defense: 5, Critical: 0, Speed: 1, Luck: 1, Gem: 0}
 	//skillinfo := SkillInfo{Attack1: 0, Attack2: 0, Attack3: 0, Attack4: 0}
@@ -106,8 +106,9 @@ func createPlayerInfoInDB(id string) {
 	// 	log.Fatal(err)
 	// }
 	chaUUID := uuid.New().String()
-	_, err = db.DB.Exec("INSERT INTO character (character_id, hp, mp, money, level, attributes, player_id) VALUES ($1, $2, $3, $4, $5, $6, $7)", chaUUID, 100, 100, 100, 1, characterInfojsonData, id)
+	_, err = db.DB.Exec("INSERT INTO character (character_id, hp, mp, money, level, attributes, player_id, storynum) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", chaUUID, 100, 100, 100, 1, characterInfojsonData, id, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
+	return chaUUID
 }

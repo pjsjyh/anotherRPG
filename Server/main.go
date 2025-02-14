@@ -4,6 +4,8 @@ import (
 	"Server/db"
 	"Server/handlers"
 	"Server/monster"
+	"Server/quest"
+
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +22,8 @@ func main() {
 	r.POST("/register", handlers.Register)
 	r.POST("/login", handlers.Login)
 	r.POST("/monsterSet", monster.MonsterSet)
+	r.GET("/quest/:id", quest.GetQuestByID)
+	r.POST("/quest", quest.AddQuestID)
 
 	// 서버 시작
 	r.Run(":8080")

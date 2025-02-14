@@ -9,9 +9,15 @@ using Newtonsoft.Json;
 using ApiUtilities;
 using MyServerManager;
 using SettingAccountManager;
-
+using CharacterInfo;
 namespace RegisterManager
 {
+    public class RegisterResponse
+    {
+        public string status { get; set; }
+        public string message { get; set; }
+        public ChaInfoOther playerinfo { get; set; }
+    }
     public class Register
     {
         public static async Task<bool> CreateAccount(string id, string password, string username, TextMeshProUGUI duplicateErrorText)
@@ -34,7 +40,7 @@ namespace RegisterManager
             {
                 //HttpResponseMessage response = await ServerManager.Instance.PostAsync(ApiUrls.RegisterUrl, content);
                 UnityWebRequest response = await ServerManager.Instance.PostAsync(ApiUrls.RegisterUrl, values);
-                Debug.Log(response);
+                Debug.Log(response.result);
                 if (response == null)
                 {
                     Debug.LogError("UnityWebRequest response is null. Check the request initialization.");
@@ -58,17 +64,47 @@ namespace RegisterManager
                     {
                         Debug.Log("No error found. Processing success response.");
                         await SettingAccount.DoSettingAccount(responseBody); // 비동기 메서드로 처리
+
                         response.Dispose();
                         return true;
                     }
                 }
                 else
                 {
-                    Debug.LogError("Error: HTTP Response Code " + response.responseCode);
-                    Debug.LogError("Error Details: " + response.error);
-                    response.Dispose();
-                    return false;
+                    string responseBody = response.downloadHandler.text;
+                    Debug.Log(responseBody);
+                    if (responseBody.Contains("error_type"))
+                    {
+                        Debug.Log("Error detected in response.");
+                        duplicateErrorText.gameObject.SetActive(true);
+                        var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseBody);
+                        if (errorResponse["error_type"] == "duplicate_id")
+                        {
+                            duplicateErrorText.text = "아이디가 이미 존재합니다.";
+                        }
+                        else if (errorResponse["error_type"] == "duplicate_username")
+                        {
+                            duplicateErrorText.text = "같은 닉네임이 존재합니다.";
+                        }
+                        response.Dispose();
+                        return false;
+                    }
+                    else
+                    {
+                        Debug.LogError("Error: HTTP Response Code " + response.responseCode);
+                        Debug.LogError("Error Details: " + response.error);
+                        response.Dispose();
+                        return false;
+                    }
+                    
                 }
+              
+                //else
+                //{
+                //    Debug.LogError("Unexpected error occurred.");
+                //    response.Dispose();
+                //    return false;
+                //}
                 //if (response.StatusCode == System.Net.HttpStatusCode.Conflict) // 409 Conflict 처리
                 //{
                 //    string responseBody = await response.Content.ReadAsStringAsync();
