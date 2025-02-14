@@ -43,6 +43,7 @@ namespace CharacterInfo
     public class CharacterManager
     {
         private static CharacterManager instance;
+        private static CharacterRepository characterRepo = new CharacterRepository();
         public ChaInfo myCharacter;
         public ChaInfoOther myCharacterOther;
         public List<QuestInfo> questInfo;
@@ -87,6 +88,24 @@ namespace CharacterInfo
             };
             Debug.Log(newQuest);
             questInfo.Add(newQuest);
+        }
+        public void SaveData()
+        {
+            characterRepo.SaveCharacterData(this);
+        }
+
+        // ✅ 캐릭터 데이터 불러오기
+        public void LoadData()
+        {
+            var loadedData = characterRepo.LoadCharacterData();
+            if (loadedData != null)
+            {
+                myCharacter = loadedData.myCharacter;
+                myCharacterOther = loadedData.myCharacterOther;
+                questInfo = loadedData.questInfo;
+                characterPersonalinfo = loadedData.characterPersonalinfo;
+                _username = loadedData._username;
+            }
         }
     }
 

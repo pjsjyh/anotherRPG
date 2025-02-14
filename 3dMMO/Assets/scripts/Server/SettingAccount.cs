@@ -23,25 +23,10 @@ namespace SettingAccountManager
           
             // 다시 JSON으로 파싱
             Debug.Log(jsonResponse);
-            ChaInfoOther characterData;
-            if (string.IsNullOrWhiteSpace(characterJson))
-            {
-                // 기본값으로 초기화
-                characterData = new ChaInfoOther
-                {
-                    _attack = 1,
-                    _defense = 1,
-                    _critical = 1,
-                    _speed = 1,
-                    _luck = 1
-                    // 다른 필드들도 기본값으로 설정
-                };
-            }
-            else
-            {
-                // characterJson이 비어있지 않으면 JSON 데이터를 파싱
-                characterData = JsonConvert.DeserializeObject<ChaInfoOther>(characterJson);
-            }
+            ChaInfoOther characterData =  string.IsNullOrWhiteSpace(characterJson)
+                ? new ChaInfoOther { _attack = 1, _defense = 1, _critical = 1, _speed = 1, _luck = 1 }
+                : JsonConvert.DeserializeObject<ChaInfoOther>(characterJson);
+          
 
             var playerHP = int.Parse(playerInfo["HP"].ToString());
             var playerMp = int.Parse(playerInfo["MP"].ToString());
@@ -58,7 +43,7 @@ namespace SettingAccountManager
             CharacterManager.Instance.InitializePlayer(characterData, playerName, playerHP, playerMp, playerMoney, playerLevel);
 
 
-
+            CharacterManager.Instance.SaveData();
 
             await Task.CompletedTask;
         }
