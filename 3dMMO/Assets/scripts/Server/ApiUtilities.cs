@@ -11,5 +11,6 @@ namespace ApiUtilities
         public static string SaveUrl = BaseUrl + "/save";
         public static string QuesteUrl = BaseUrl + "/quest/";
         public static string QuestAddUrl = BaseUrl + "/quest";
+        public static string QuestList = BaseUrl + "/questList/";
     }
 }

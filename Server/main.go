@@ -24,6 +24,7 @@ func main() {
 	r.POST("/monsterSet", monster.MonsterSet)
 	r.GET("/quest/:id", quest.GetQuestByID)
 	r.POST("/quest", quest.AddQuestID)
+	r.GET("/questList/:character_id", quest.GetQuestList)
 
 	// 서버 시작
 	r.Run(":8080")

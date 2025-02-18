@@ -28,17 +28,11 @@ namespace CharacterInfo
         public int _attack3;
         public int _attack4;
     };
-    public struct QuestInfo
-    {
-        public string _questId;
-        public bool _isComplete;
-        public int _requiredAmount;
-        public string _questType;
-    };
+
     public struct CharacterPersonalInfo
     {
         public string charater_id;
-        public int storyNum;
+        public float storyNum;
     }
     public class CharacterManager
     {
@@ -46,7 +40,6 @@ namespace CharacterInfo
         private static CharacterRepository characterRepo = new CharacterRepository();
         public ChaInfo myCharacter;
         public ChaInfoOther myCharacterOther;
-        public List<QuestInfo> questInfo;
         public CharacterPersonalInfo characterPersonalinfo;
         public string _username = "";
         // private 생성자: 외부에서 인스턴스 생성 불가능
@@ -61,7 +54,6 @@ namespace CharacterInfo
                 if (instance == null)
                 {
                     instance = new CharacterManager();
-                    instance.questInfo = new List<QuestInfo>();
                 }
                 return instance;
             }
@@ -76,19 +68,7 @@ namespace CharacterInfo
             _username = username;
         }
         
-        public void AddQuest(string id, string questType, int requiredAmount)
-        {
-
-            QuestInfo newQuest = new QuestInfo
-            {
-                _questId = id,
-                _questType = questType,
-                _requiredAmount = requiredAmount,
-                _isComplete = false
-            };
-            Debug.Log(newQuest);
-            questInfo.Add(newQuest);
-        }
+       
         public void SaveData()
         {
             characterRepo.SaveCharacterData(this);
@@ -102,7 +82,7 @@ namespace CharacterInfo
             {
                 myCharacter = loadedData.myCharacter;
                 myCharacterOther = loadedData.myCharacterOther;
-                questInfo = loadedData.questInfo;
+                //questInfo = loadedData.questInfo;
                 characterPersonalinfo = loadedData.characterPersonalinfo;
                 _username = loadedData._username;
             }

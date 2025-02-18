@@ -2,17 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using CharacterInfo;
 public class MainStoryFirst : StoryManager
 {
     public GameObject personOld;
     async public void Start()
     {
+        //await LoadStory();
         await MainQuestStart();
-        StartCoroutine(MoveAndLookAtTarget(new Vector3(7, 0, 1)));
+       
+    }
+    async public Task LoadStory()
+    {
+        int intchange = (int)Mathf.FloorToInt(CharacterManager.Instance.characterPersonalinfo.storyNum);
+        if (intchange == 0)
+        {
+
+        }
+        return;
     }
     async public Task MainQuestStart()
     {
         await StartStory("MainStory/MS_1", "MainFirst");
+        StartCoroutine(MoveAndLookAtTarget(new Vector3(7, 0, 1)));
         return;
     }
     private IEnumerator MoveAndLookAtTarget(Vector3 targetPosition)

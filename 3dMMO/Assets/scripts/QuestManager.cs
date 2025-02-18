@@ -8,6 +8,31 @@ using System.Text;
 using CharacterInfo;
 namespace Quest
 {
+
+    public class QuestInfo
+    {
+        [JsonProperty("quest_id")]
+        public string _questId { get; set; }
+
+        [JsonProperty("name")]
+        public string _title { get; set; }
+
+        [JsonProperty("description")]
+        public string _description { get; set; }
+
+        [JsonProperty("is_finish")]
+        public bool _isFinish { get; set; }
+
+        [JsonProperty("progress")]
+        public int _progress { get; set; }
+
+        [JsonProperty("type")]
+        public string _questType { get; set; }
+
+        [JsonProperty("reward")]
+        public string _reward { get; set; }
+    }
+
     public class QuestManager : MonoBehaviour
     {
         public static QuestManager Instance = null;
@@ -17,6 +42,9 @@ namespace Quest
         public TextMeshProUGUI questDescription;
         public TextMeshProUGUI questReward;
         public Button questOKBtn;
+        public GameObject questParnet;
+        public List<QuestInfo> questInfo;
+
         private QuesetServer qs;
         private string nowOpenQuestID;
         private string jsonFilePath = "Assets/scripts/Quest/QuestInfo.json";
@@ -25,6 +53,7 @@ namespace Quest
             if (Instance == null)
             {
                 Instance = this;
+                questInfo = new List<QuestInfo>();
                 DontDestroyOnLoad(gameObject); // 씬 전환 시에도 파괴되지 않도록 설정
                 qs = GetComponent<QuesetServer>();
             }
@@ -78,10 +107,12 @@ namespace Quest
             questDescription.text = description;
             questReward.text = reward;
         }
-        public void ClickQuest()
+
+        public async void ClickQuest()
         {
-            qs.addQuest(nowOpenQuestID);
+            await qs.addQuest(nowOpenQuestID);
             popupQuest.SetActive(false);
+            questParnet.GetComponent<AddQuestUI>().makeQuestUI();
             //CharacterManager.Instance.AddQuest(questTitle, questType, requiredAmount);
         }
     }

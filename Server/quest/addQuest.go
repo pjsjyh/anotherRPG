@@ -8,11 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type AcceptQuestRequest struct {
-	CharacterID string `json:"character_id"`
-	QuestID     string `json:"quest_id"`
-}
-
 func AddQuestID(c *gin.Context) {
 	character_id := c.PostForm("character_id")
 	quest_id := c.PostForm("quest_id")

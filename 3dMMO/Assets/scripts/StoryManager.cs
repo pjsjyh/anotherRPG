@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using TMPro;
 using Quest;
-
+using CharacterInfo;
 public class StoryManager : MonoBehaviour
 {
     public GameObject chatUI;
@@ -83,6 +83,8 @@ public class StoryManager : MonoBehaviour
             }
         }
         chatUI.SetActive(false);
+        CharacterManager.Instance.characterPersonalinfo.storyNum += 0.1f;
+
         if (questid != "")
         {
             QuestManager.Instance.GetQuestByID(questid);
@@ -97,4 +99,25 @@ public class StoryManager : MonoBehaviour
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
         yield return new WaitForSeconds(0.5f);
     }
+    public async Task StartStoryFromArray(Chatword[] story)
+    {
+        await RunCoroutineAsTask(ShowDialogueFromArray(story));
+    }
+
+    private IEnumerator ShowDialogueFromArray(Chatword[] story)
+    {
+        chatUI.SetActive(true);
+
+        for (int i = 0; i < story.Length; i++)
+        {
+            storyName.text = story[i].name;
+            storyDescription.text = story[i].textword;
+
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0)); // 클릭 대기
+            yield return new WaitForSeconds(0.5f); // 딜레이
+        }
+
+        chatUI.SetActive(false);
+    }
+
 }

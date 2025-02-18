@@ -23,20 +23,29 @@
         "quest": "ffb48950-2049-4e35-a3a2-e691a54cda0d",
         "storyNum":  0
       },
+     
       {
-        "sceneName": "Quest1",
+        "sceneName": "MainSecond",
         "dialogues": [
           {
-            "name": "Quest Master",
-            "dialogue": "Your first task is ahead."
+            "name": "마을 소녀",
+            "dialogue": "안녕! 너가 이번에 온 용사니?!"
           },
           {
-            "name": "Player",
-            "dialogue": "I'm ready!"
+            "name": "마을 소녀",
+            "dialogue": "용사가 된지 얼마 안된 것 같아보이네."
+          },
+          {
+            "name": "마을 소녀",
+            "dialogue": "적응 할 겸 몬스터 2마리만 잡아보는거 어때?"
+          },
+          {
+            "name": "마을 소녀",
+            "dialogue": "마을 밖을 나가면 파란 슬라임이 있을꺼야!"
           }
         ],
-        "quest": "non",
-        "storyNum": 1
+        "quest": "1490f5c5-b236-4369-8345-3edd4a0734dd",
+        "storyNum": 0.2
       }
     ]
 }
