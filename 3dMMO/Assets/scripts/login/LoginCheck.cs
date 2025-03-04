@@ -102,7 +102,8 @@ public class LoginCheck : MonoBehaviour
     }
     public void sceneChange()
     {
-        SceneTransManager.Instance.FadeAndLoadScene("GameScene");
+       // SceneTransManager.Instance.FadeAndLoadScene("GameScene");
+        SceneTransManager.Instance.FadeAndLoadScene("LoadingScene");
     }
     public void turnOffcreateAccountSuccesPanel()
     {

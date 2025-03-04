@@ -58,7 +58,8 @@ namespace LoginManager
                         }
                         else
                         {
-                            await SettingAccount.DoSettingAccount(responseBody); // 성공 시 계정 설정
+                            GameManager.Instance.saveData(responseBody);
+                            //await SettingAccount.DoSettingAccount(responseBody); // 성공 시 계정 설정
                             response.Dispose();
                             return true;
                         }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"Server/db"
+	"encoding/json"
 	"fmt"
 )
 
@@ -11,15 +12,16 @@ type GetPlayerInfo struct {
 	MP         string
 	Money      string
 	Level      string
-	Attributes string `json:"character"`
+	Attributes string `json:"attributes"`
 	PlayerID   string
 	Username   string
 	Storynum   string
+	GetQuest   json.RawMessage `json:"getQuest"`
 }
 
 func GetCharacterInfo(id, username string) GetPlayerInfo {
 	var playerInfo GetPlayerInfo
-	err := db.DB.QueryRow("SELECT character_id, hp, mp, money,level, attributes, player_id FROM character WHERE player_id = $1", id).Scan(&playerInfo.ID, &playerInfo.HP, &playerInfo.MP, &playerInfo.Money, &playerInfo.Level, &playerInfo.Attributes, &playerInfo.PlayerID)
+	err := db.DB.QueryRow("SELECT character_id, hp, mp, money,level, attributes, player_id, level, storynum, get_quest::json FROM character WHERE player_id = $1", id).Scan(&playerInfo.ID, &playerInfo.HP, &playerInfo.MP, &playerInfo.Money, &playerInfo.Level, &playerInfo.Attributes, &playerInfo.PlayerID, &playerInfo.Username, &playerInfo.Storynum, &playerInfo.GetQuest)
 	if err != nil {
 		fmt.Println(playerInfo)
 		return playerInfo

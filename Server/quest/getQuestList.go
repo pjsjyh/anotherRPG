@@ -2,8 +2,10 @@ package quest
 
 import (
 	"Server/db"
+	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,14 +14,10 @@ type AcceptQuestRequest struct {
 	CharacterID string `json:"character_id"`
 	QuestID     string `json:"quest_id"`
 }
-type QuestList struct {
-	QuestID     string `json:"quest_id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Reward      string `json:"reward"`
-	Type        string `json:"type"`
-	Progress    int    `json:"progress"`
-	IsFinish    bool   `json:"is_finish"`
+
+type QuestSetting struct {
+	QuestData QuestData
+	Quest     Quest
 }
 
 func GetQuestList(c *gin.Context) {
@@ -30,35 +28,73 @@ func GetQuestList(c *gin.Context) {
 		return
 	}
 
-	// 1. 퀘스트 리스트
-	rows, err := db.DB.Query(`
-		SELECT q.quest_id, q.name, q.description, q.reward, q.type, cq.progress, cq.is_finish
-		FROM quest q 
-		JOIN character_quest cq ON q.quest_id = cq.quest_id 
-		WHERE cq.character_id = $1`, characterID)
-
+	// 1️⃣ `character` 테이블에서 `get_quest` 데이터 가져오기
+	var getQuestJSON string
+	err := db.DB.QueryRow("SELECT get_quest FROM character WHERE character_id = $1", characterID).Scan(&getQuestJSON)
 	if err != nil {
-		log.Println("❌ 퀘스트 조회 실패:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch quests"})
+		log.Println("❌ 캐릭터 퀘스트 목록 조회 실패:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch character quests"})
 		return
 	}
-	defer rows.Close()
+	// 2️⃣ JSON 데이터를 `QuestData` 배열로 변환 (문자열로 저장된 progress 처리)
+	log.Println("📌 getQuestJSON 데이터 확인:", getQuestJSON)
 
-	// 2. quest_id 존재 여부 확인
-	var quests []QuestList
-	for rows.Next() {
-		var q QuestList
-		if err := rows.Scan(&q.QuestID, &q.Name, &q.Description, &q.Reward, &q.Type, &q.Progress, &q.IsFinish); err != nil {
-			log.Println("❌ 데이터 변환 오류:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse quests"})
-			return
-		}
-		quests = append(quests, q)
+	var unescapedJSON string
+	if err := json.Unmarshal([]byte(getQuestJSON), &unescapedJSON); err == nil {
+		getQuestJSON = unescapedJSON // 🔹 JSON 문자열이었으면 한 번 풀어줌
+		log.Println("🔄 JSON 이중 인코딩 해제됨:", getQuestJSON)
 	}
-	log.Println("✅ 퀘스트 목록 조회 성공:", quests)
-	// JSON 응답 반환
+
+	var rawQuestDataList []map[string]interface{}
+	if err := json.Unmarshal([]byte(getQuestJSON), &rawQuestDataList); err != nil {
+		log.Println("❌ JSON 파싱 오류:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse get_quest data"})
+		return
+	}
+
+	var questDataList []QuestData
+	for _, rawData := range rawQuestDataList {
+		var questData QuestData
+		questData.QuestID = rawData["quest_id"].(string)
+		questData.IsFinish = rawData["is_finish"].(bool)
+
+		// ✅ progress 값이 문자열이면 int로 변환
+		if progressStr, ok := rawData["progress"].(string); ok {
+			convertedProgress, _ := strconv.Atoi(progressStr)
+			questData.Progress = convertedProgress
+		} else {
+			questData.Progress = int(rawData["progress"].(float64)) // JSON이 float64로 변환될 수도 있음
+		}
+
+		questDataList = append(questDataList, questData)
+	}
+
+	// 3️⃣ `quest_id`들을 모아서 `quest` 테이블에서 상세 정보 가져오기
+	var questSettings []QuestSetting
+	for _, questData := range questDataList {
+		var quest Quest
+
+		err := db.DB.QueryRow(`
+			SELECT quest_id, name, description, reward, type 
+			FROM quest WHERE quest_id = $1`, questData.QuestID).Scan(
+			&quest.QuestID, &quest.Name, &quest.Description, &quest.Reward, &quest.Type)
+
+		if err != nil {
+			log.Println("⚠️ 퀘스트 정보 조회 실패:", questData.QuestID, err)
+			continue
+		}
+
+		// 4️⃣ `QuestSetting` 구조체로 합쳐서 리스트에 추가
+		questSettings = append(questSettings, QuestSetting{
+			QuestData: questData,
+			Quest:     quest,
+		})
+	}
+
+	// ✅ 최종 응답
+	log.Println("✅ 퀘스트 목록 조회 성공:", questSettings)
 	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
-		"quests": quests,
+		"quests": questSettings,
 	})
 }

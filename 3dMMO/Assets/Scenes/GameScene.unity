@@ -2878,6 +2878,38 @@ RectTransform:
   m_AnchoredPosition: {x: -16.59961, y: -515.86}
   m_SizeDelta: {x: -38.69287, y: 716.52496}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &165163600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 165163601}
+  m_Layer: 0
+  m_Name: AssetCharater
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &165163601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165163600}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 491912449}
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &170988867
 GameObject:
   m_ObjectHideFlags: 0
@@ -5563,15 +5595,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 491912448}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 904123798}
   - {fileID: 1595044808}
-  m_Father: {fileID: 1756317315}
-  m_RootOrder: 2
+  m_Father: {fileID: 165163601}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &498529044
 GameObject:
@@ -11582,17 +11614,17 @@ PrefabInstance:
     - target: {fileID: 7019920669011962644, guid: cc91c8ba8b9a34f4d99e70d721f60b64,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.085393
+      value: -14.360869
       objectReference: {fileID: 0}
     - target: {fileID: 7019920669011962644, guid: cc91c8ba8b9a34f4d99e70d721f60b64,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.2571073
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7019920669011962644, guid: cc91c8ba8b9a34f4d99e70d721f60b64,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.418062
+      value: 11.349127
       objectReference: {fileID: 0}
     - target: {fileID: 7019920669011962644, guid: cc91c8ba8b9a34f4d99e70d721f60b64,
         type: 3}
@@ -11636,8 +11668,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7647134206250791342, guid: cc91c8ba8b9a34f4d99e70d721f60b64,
         type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7647134206250791342, guid: cc91c8ba8b9a34f4d99e70d721f60b64,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7647134206250791342, guid: cc91c8ba8b9a34f4d99e70d721f60b64,
+        type: 3}
+      propertyPath: m_TagString
+      value: NPC
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
@@ -12130,17 +12172,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.4275088
+      value: -2.8479676
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.2571073
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.2632692
+      value: 2.1943338
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
@@ -12184,8 +12226,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
+        type: 3}
+      propertyPath: m_TagString
+      value: NPC
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
@@ -12232,7 +12284,7 @@ GameObject:
   - component: {fileID: 915001527}
   - component: {fileID: 915001529}
   m_Layer: 0
-  m_Name: QuestManager
+  m_Name: QuestUISetting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12744,6 +12796,7 @@ MonoBehaviour:
   chatUI: {fileID: 0}
   storyName: {fileID: 0}
   storyDescription: {fileID: 0}
+  npcGroup: {fileID: 0}
   personOld: {fileID: 1893038274}
 --- !u!1 &951645194
 GameObject:
@@ -15702,7 +15755,7 @@ GameObject:
   - component: {fileID: 1151328765}
   - component: {fileID: 1151328764}
   - component: {fileID: 1151328763}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Question_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15972,7 +16025,7 @@ GameObject:
   - component: {fileID: 1175449469}
   - component: {fileID: 1175449468}
   - component: {fileID: 1175449472}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16407,7 +16460,7 @@ GameObject:
   - component: {fileID: 1216017642}
   - component: {fileID: 1216017641}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: CharacterUISetting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18495,6 +18548,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1042195285}
     m_Modifications:
+    - target: {fileID: 597204344519775952, guid: 35d09f78b7a80a8448093fbe373dc51a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2793361740612504168, guid: 35d09f78b7a80a8448093fbe373dc51a,
         type: 3}
       propertyPath: m_PresetInfoIsWorld
@@ -18504,6 +18562,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Canvas (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2793361740612504170, guid: 35d09f78b7a80a8448093fbe373dc51a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2793361740612504170, guid: 35d09f78b7a80a8448093fbe373dc51a,
         type: 3}
@@ -20196,6 +20259,7 @@ MonoBehaviour:
   - name: "\uB9C8\uC744 \uC18C\uB140"
     textword: "\uB9C8\uC744\uC774 \uB2E4\uC2DC \uC2DC\uB04C\uBC85\uC801 \uD574\uC84C\uC73C\uBA74
       \uC88B\uACA0\uC5B4."
+  npcCharaterID: NPC_purpleGirl
 --- !u!136 &1595044811
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -21778,7 +21842,6 @@ Transform:
   m_Children:
   - {fileID: 751552479}
   - {fileID: 424536380}
-  - {fileID: 491912449}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -23469,6 +23532,20 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 904123797}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1893038275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1893038274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddf74a5b18901964f9ff1adee895e4b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defualtWord: []
+  npcCharaterID: NPC_Headman
 --- !u!1 &1897846568
 GameObject:
   m_ObjectHideFlags: 0
@@ -24533,8 +24610,7 @@ MonoBehaviour:
   chatUI: {fileID: 0}
   storyName: {fileID: 0}
   storyDescription: {fileID: 0}
-  questPrefab: {fileID: 0}
-  questParent: {fileID: 0}
+  npcGroup: {fileID: 0}
 --- !u!114 &1973048800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25135,6 +25211,7 @@ MonoBehaviour:
   chatUI: {fileID: 2120739701}
   storyName: {fileID: 1082727871}
   storyDescription: {fileID: 877985842}
+  npcGroup: {fileID: 491912448}
 --- !u!4 &2003422891
 Transform:
   m_ObjectHideFlags: 0
@@ -27361,7 +27438,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2120739702
 RectTransform:
   m_ObjectHideFlags: 0
@@ -46283,7 +46360,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 417.81, y: -45}
-  m_SizeDelta: {x: 417.81, y: 90}
+  m_SizeDelta: {x: 0, y: 90}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!1 &9094579288170986097
 GameObject:

@@ -21,7 +21,21 @@
           }
         ],
         "quest": "ffb48950-2049-4e35-a3a2-e691a54cda0d",
-        "storyNum":  0
+        "storyNum": 0,
+        "npcMovements": [
+          {
+            "npcID": "NPC_Headman",
+            "targetPosition": {
+              "x": 7,
+              "y": 0,
+              "z": 1
+            },
+            "moveSpeed": 1.5,
+            "animation": "IsWalk",
+            "lookAtTarget": true,
+            "waitTime": 2.0
+          }
+        ]
       },
      
       {

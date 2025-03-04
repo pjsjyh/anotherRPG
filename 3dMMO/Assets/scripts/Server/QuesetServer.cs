@@ -6,36 +6,19 @@ using System;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.IO;
-using Quest;
 using MyServerManager;
 using CharacterInfo;
 using System.Threading.Tasks;
+using Questsetting;
 public class QuesetServer : MonoBehaviour
 {
-    public class Quest
-    {
-        public string quest_id;
-        public string name;
-        public string description;
-        public string reward;
-        public string type;
-    }
+  
 
     public void GetQuestByID(string questID)
     {
         StartCoroutine(GetQuest(questID));
     }
-    public async Task addQuest(string getid)
-    {
-        var values = new Dictionary<string, string>
-        {
-            { "quest_id", getid },
-            { "character_id", CharacterManager.Instance.characterPersonalinfo.charater_id },
-        };
-        UnityWebRequest response = await ServerManager.Instance.PostAsync(ApiUrls.QuestAddUrl, values);
-
-        await FetchQuestList(CharacterManager.Instance.characterPersonalinfo.charater_id);
-    }
+  
     IEnumerator GetQuest(string questID)
     {
         if (string.IsNullOrEmpty(questID))
@@ -60,9 +43,26 @@ public class QuesetServer : MonoBehaviour
                 string jsonResponse = request.downloadHandler.text;
                 Debug.Log($"✅ 서버 응답: {jsonResponse}");
                 Quest q = JsonConvert.DeserializeObject<Quest>(jsonResponse);
-                QuestManager.Instance.SettingQuestUI(q.name, q.description, q.reward, q.quest_id);
+                QuestUISetting.Instance.SettingQuestUI(q.name, q.description, q.reward, q.quest_id);
             }
         }
+    }
+    public async Task addQuest(string getid)
+    {
+        var values = new Dictionary<string, string>
+        {
+           { "quest_id", getid },
+            { "is_finish", "false"},
+            { "progress", "0"},
+            { "character_id", CharacterManager.Instance.characterPersonalinfo.charater_id },
+        };
+        UnityWebRequest response = await ServerManager.Instance.PostAsync(ApiUrls.QuestAddUrl, values);
+
+        await FetchQuestList(CharacterManager.Instance.characterPersonalinfo.charater_id);
+    }
+    public async Task FirstQuestSetting()
+    {
+        await FetchQuestList(CharacterManager.Instance.characterPersonalinfo.charater_id);
     }
     public async Task FetchQuestList(string characterId)
     {
@@ -74,6 +74,7 @@ public class QuesetServer : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
+                Debug.Log(request);
                 string jsonResponse = request.downloadHandler.text;
                 Debug.Log($"✅ 퀘스트 목록 불러오기 성공: {jsonResponse}");
 
@@ -88,17 +89,35 @@ public class QuesetServer : MonoBehaviour
     }
     public async Task GetQuestList(string jsonResponse)
     {
+        Debug.Log(jsonResponse);
+
         var response = JsonConvert.DeserializeObject<QuestResponse>(jsonResponse);
 
         if (response != null && response.quests != null)
         {
-            Debug.Log(response);
             // ✅ 기존 리스트를 초기화하고 새 데이터를 추가
             QuestManager.Instance.questInfo.Clear();
-            QuestManager.Instance.questInfo.AddRange(response.quests);
+            foreach (var quest in response.quests)
+            {
+                if (quest == null)
+                {
+                    Debug.LogError("⚠️ quest 데이터가 NULL입니다.");
+                    continue;
+                }
+                if (quest.questget == null)
+                {
+                    Debug.LogError($"⚠️ 퀘스트 {quest.quest.quest_id}의 questget이 NULL입니다.");
+                    continue;
+                }
+
+                QuestManager.Instance.questInfo.Add(quest);
+            }
 
             Debug.Log("✅ 퀘스트 목록 저장 완료!");
-            foreach (var quest in response.quests)
+            foreach (var quest in QuestManager.Instance.questInfo)
+            {
+                Debug.Log($"📝 퀘스트 ID: {quest.questget.quest_id}, 진행도: {quest.questget.progress}, 보상: {quest.quest.reward}");
+            }
 
             await Task.Delay(100);
         }

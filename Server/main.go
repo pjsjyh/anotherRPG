@@ -5,6 +5,7 @@ import (
 	"Server/handlers"
 	"Server/monster"
 	"Server/quest"
+	"Server/savedata"
 
 	"fmt"
 
@@ -25,6 +26,7 @@ func main() {
 	r.GET("/quest/:id", quest.GetQuestByID)
 	r.POST("/quest", quest.AddQuestID)
 	r.GET("/questList/:character_id", quest.GetQuestList)
+	r.POST("/saveData", savedata.SaveData)
 
 	// 서버 시작
 	r.Run(":8080")

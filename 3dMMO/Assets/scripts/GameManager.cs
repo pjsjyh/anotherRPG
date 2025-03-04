@@ -1,70 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using CharacterInfo;
-
+using SettingAccountManager;
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    // 싱글톤 인스턴스
     public static GameManager Instance { get; private set; }
-
-
-    public GameObject gamePanel;
-    public GameObject player;
-    public TextMeshProUGUI playerHealthText;
-    public TextMeshProUGUI playerMpText;
-    public TextMeshProUGUI playerLevelText;
-    public TextMeshProUGUI playerCoinText;
-    public RectTransform playerHealthBar;
-    public RectTransform playerMpBar;
+    private string characterData;
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject); // 씬이 바뀌어도 파괴되지 않도록 설정
         }
         else
         {
-            if (Instance != this)
-                Destroy(this.gameObject);
+            Destroy(gameObject); // 중복 생성 방지
         }
     }
-    private void Start()
+    public void saveData(string data)
     {
-        if (CharacterManager.Instance._username == "")
-        {
-            ChaInfoOther managerInfo = new ChaInfoOther
-            {
-                 _attack=9999,
-                _defense=9999,
-                _critical=9999,
-                _speed=100,
-                _luck=9999,
-                _gem=0
-            };
-
-            CharacterManager.Instance.InitializePlayer(managerInfo, "manager", 100, 100, 999999, 999);
-        }
+        characterData = data;
     }
-
-    void LateUpdate()
+    public async void InitializeGameManagers()
     {
-
-        playerHealthText.text = CharacterManager.Instance.myCharacter._hp + " / " + "100";
-        playerLevelText.text = CharacterManager.Instance.myCharacter._level.ToString();
-        // playerNameText.text = CharacterManager.Instance._username;
-        player.transform.Find("name/NameText").GetComponent<TextMeshProUGUI>().text = CharacterManager.Instance._username;
-        playerCoinText.text = string.Format("{0:n0}", CharacterManager.Instance.myCharacter._money);
-        if (player != null)
-        {
-            if ((float)CharacterManager.Instance.myCharacter._hp / 100 >= 0)
-                playerHealthBar.localScale = new Vector3((float)CharacterManager.Instance.myCharacter._hp / 100, 1, 1);
-        }
-
+        Debug.Log("✅ GameManager 초기화 중...");
+        QuestManager.Instance.Initialize();
+        await SettingAccount.DoSettingAccount(characterData);
+        // 다른 매니저들 초기화 (예: QuestUISetting, StoryManager 등)
     }
-
 }

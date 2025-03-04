@@ -9,7 +9,6 @@ public class GameStory : MonoBehaviour
 
     public void CallMainStoryFirst()
     {
-        mainStoryFirst.MainQuestStart();
 
     }
 
