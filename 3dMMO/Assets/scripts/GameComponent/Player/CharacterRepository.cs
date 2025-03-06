@@ -14,7 +14,7 @@ public class CharacterRepository : MonoBehaviour
         {
             string json = JsonConvert.SerializeObject(characterManager, Formatting.Indented);
             File.WriteAllText(saveFilePath, json);
-            Debug.Log("✅ 캐릭터 데이터 저장 완료: " + saveFilePath);
+            //Debug.Log("✅ 캐릭터 데이터 저장 완료: " + saveFilePath);
         }
         catch (System.Exception e)
         {

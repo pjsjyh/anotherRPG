@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 )
 
 type Character struct {
@@ -19,6 +20,8 @@ type Character struct {
 	Level       int             `json:"level"`
 	Storynum    float32         `json:"storynum"`
 	GetQuest    json.RawMessage `json:"get_quest"` // ✅ JSON 필드
+	Position    []float64       `json:"position"`
+	Rotation    []float64       `json:"rotation"`
 }
 
 func SaveData(c *gin.Context) {
@@ -35,10 +38,15 @@ func SaveData(c *gin.Context) {
 
 	// DB에 업데이트 (예제 코드)
 	_, err := db.DB.Exec(`UPDATE character 
-		SET hp = $1, mp = $2, money = $3, level = $4, storynum = $5, attributes = $6, get_quest = $7
-		WHERE character_id = $8`,
+    SET hp = $1, mp = $2, money = $3, level = $4, storynum = $5, attributes = $6, get_quest = $7,
+        position = $8, rotation = $9
+    WHERE character_id = $10`,
 		charData.HP, charData.MP, charData.Money, charData.Level,
-		charData.Storynum, charData.Attributes, charData.GetQuest, charData.CharacterID)
+		charData.Storynum, charData.Attributes, charData.GetQuest,
+		pq.Array(charData.Position), // 🔹 Go의 []float64 → PostgreSQL NUMERIC[]
+		pq.Array(charData.Rotation), // 🔹 Go의 []float64 → PostgreSQL NUMERIC[]
+		charData.CharacterID,
+	)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to update character data"})

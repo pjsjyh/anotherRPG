@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CharacterInfo
 {
-    public struct ChaInfo
+    public class ChaInfo
     {
         public int _hp;
         public int _mp;
@@ -12,7 +12,7 @@ namespace CharacterInfo
         public int _level;
 
     };
-    public struct ChaInfoOther
+    public class ChaInfoOther
     {
         public int _attack;
         public int _defense;
@@ -21,18 +21,13 @@ namespace CharacterInfo
         public int _luck;
         public int _gem;
     }
-    public struct SkillInfo
-    {
-        public int _attack1;
-        public int _attack2;
-        public int _attack3;
-        public int _attack4;
-    };
 
-    public struct CharacterPersonalInfo
+    public class CharacterPersonalInfo
     {
         public string charater_id;
         public float storyNum;
+        public float[] chaPosition;
+        public float[] chaRotation;
     }
     public class CharacterManager
     {
@@ -42,10 +37,7 @@ namespace CharacterInfo
         public ChaInfoOther myCharacterOther;
         public CharacterPersonalInfo characterPersonalinfo;
         public string _username = "";
-        // private 생성자: 외부에서 인스턴스 생성 불가능
-        private CharacterManager() { }
 
-        // public static 메서드: 단일 인스턴스 반환
         public static CharacterManager Instance
         {
 
@@ -58,7 +50,29 @@ namespace CharacterInfo
                 return instance;
             }
         }
-        public void InitializePlayer(ChaInfoOther playerInfo, string username, int hp, int mp, int money, int level)
+        private CharacterManager()
+        {
+            myCharacter = new ChaInfo();
+            myCharacterOther = new ChaInfoOther();
+            characterPersonalinfo = new CharacterPersonalInfo();
+        }
+        public void ManagerSetting()
+        {
+            ChaInfoOther managerInfo = new ChaInfoOther
+            {
+                _attack = 9999,
+                _defense = 9999,
+                _critical = 9999,
+                _speed = 100,
+                _luck = 9999,
+                _gem = 0
+            };
+
+            InitializePlayer(managerInfo, "manager", 100, 100, 999999, 999, new float[] { 0, 0, 0 }, new float[] { 0, 0, 0 });
+
+        }
+       
+        public void InitializePlayer(ChaInfoOther playerInfo, string username, int hp, int mp, int money, int level, float[] position, float[] rotation)
         {
             myCharacter._hp = hp;
             myCharacter._mp = mp;
@@ -66,6 +80,8 @@ namespace CharacterInfo
             myCharacter._level = level;
             myCharacterOther = playerInfo;
             _username = username;
+            characterPersonalinfo.chaPosition = position;
+            characterPersonalinfo.chaRotation = rotation;
         }
         
        
@@ -74,7 +90,6 @@ namespace CharacterInfo
             characterRepo.SaveCharacterData(this);
         }
 
-        // ✅ 캐릭터 데이터 불러오기
         public void LoadData()
         {
             var loadedData = characterRepo.LoadCharacterData();

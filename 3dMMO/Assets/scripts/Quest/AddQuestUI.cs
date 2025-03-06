@@ -15,7 +15,6 @@ public class AddQuestUI : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        Debug.Log(QuestManager.Instance.questInfo.Count);
         foreach (QuestInfo q in QuestManager.Instance.questInfo)
         {
             GameObject questUI = Instantiate(QuestPrefab, this.transform);

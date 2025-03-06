@@ -1,16 +1,16 @@
 using UnityEngine;
-using UnityEngine.Networking;
-using System.Collections;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Collections.Generic; //dictionary
+using System.Collections.Generic; 
 using Newtonsoft.Json;
-using ApiUtilities;
 using CharacterInfo;
 using System.Linq;
 using Questsetting;
+using Newtonsoft.Json.Linq;
+
 namespace SettingAccountManager
 {
+    //게임 로그인시 계정 셋팅.
+    //http통신을 이용한 캐릭터 정보 셋팅.
     public class SettingAccount
     {
         public static async Task DoSettingAccount(string responseBody)
@@ -18,14 +18,12 @@ namespace SettingAccountManager
             var jsonResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseBody);
 
             var playerInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse["playerinfo"].ToString());
-            //Debug.Log(playerInfo);
 
             var attributesJson = playerInfo["attributes"].ToString();
 
             CharacterManager.Instance.characterPersonalinfo.charater_id = jsonResponse["charaterID"].ToString();
 
 
-            //Debug.Log(jsonResponse);
 
             ChaInfoOther characterData;
             if (string.IsNullOrWhiteSpace(attributesJson))
@@ -34,7 +32,7 @@ namespace SettingAccountManager
             }
             else
             {
-                // ✅ JSON이 이중으로 감싸져 있는 경우 해결
+                //JSON이 이중으로 감싸져 있는 경우 해결
                 if (attributesJson.StartsWith("\"") && attributesJson.EndsWith("\""))
                 {
                     attributesJson = JsonConvert.DeserializeObject<string>(attributesJson);
@@ -48,16 +46,15 @@ namespace SettingAccountManager
                 {
                     List<QuestInfo> questInfoList = JsonConvert.DeserializeObject<List<QuestInfo>>(playerInfo["getQuest"].ToString());
 
-                    Debug.Log(questInfoList);
                     if (questInfoList != null && questInfoList.Count > 0)
                     {
-                        // 🔹 변환 전 JSON 확인
+                        //변환 전 JSON 확인
                         string getQuestJson = JsonConvert.SerializeObject(questInfoList);
 
-                        // 🔹 List<QuestInfo>에서 List<QuestGet> 추출
+                        //List<QuestInfo>에서 List<QuestGet> 추출
                         List<QuestGet> quests = questInfoList.Select(qi => qi.questget).ToList();
 
-                        // 🔹 변환 성공 여부 확인
+                        //변환 성공 여부 확인
                         if (quests != null && quests.Count > 0)
                         {
                             if (QuestManager.Instance == null)
@@ -98,17 +95,26 @@ namespace SettingAccountManager
             var playerMoney = int.Parse(playerInfo["Money"].ToString());
             var playerLevel = int.Parse(playerInfo["Level"].ToString());
             var playerName = playerInfo["Username"].ToString();
+            var playerPosition = playerInfo["Position"];
+            var playerRotation = playerInfo["Rotation"];
+            float[] positionArray= { 0,0,0}, rotationArray= { 0,0,0};
+            if (playerPosition is JArray jArray)
+            {
+                positionArray = jArray.ToObject<float[]>(); 
+            }
+            if (playerRotation is JArray jArray2)
+            {
+                rotationArray = jArray2.ToObject<float[]>();
+            }
             float storyNum;
             bool isParsed = float.TryParse(playerInfo["Storynum"].ToString(), out storyNum);
-            
+
 
             if (isParsed)
             {
                 CharacterManager.Instance.characterPersonalinfo.storyNum = storyNum;
-                Debug.Log(CharacterManager.Instance.characterPersonalinfo.storyNum);
             }
-            CharacterManager.Instance.InitializePlayer(characterData, playerName, playerHP, playerMp, playerMoney, playerLevel);
-
+            CharacterManager.Instance.InitializePlayer(characterData, playerName, playerHP, playerMp, playerMoney, playerLevel, positionArray, rotationArray);
             CharacterManager.Instance.SaveData();
 
             await Task.CompletedTask;

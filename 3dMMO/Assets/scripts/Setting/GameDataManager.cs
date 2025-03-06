@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using UnityEngine.Networking;
 using MyServerManager;
 using ApiUtilities;
+using System;
 
 public class CharacterData
 {
@@ -19,6 +20,8 @@ public class CharacterData
     public string player_id;
     public string attributes;  // JSON 형식의 문자열
     public string get_quest;   // JSON 형식의 문자열
+    public List<object> position;
+    public List<object> rotation;
 }
 
 public class GameDataManager : MonoBehaviour
@@ -48,6 +51,8 @@ public class GameDataManager : MonoBehaviour
 
     private IEnumerator SortAndSaveData()
     {
+        GameObject.Find("Character").GetComponent<Player>().SavePositionRotation();
+
         // 데이터 정리
         SortData();
 
@@ -61,8 +66,57 @@ public class GameDataManager : MonoBehaviour
 
     private void SaveGameData()
     {
-        // ✅ 로컬 파일 저장 (필요 시 확장 가능)
+        // 로컬 파일 저장 (필요 시 확장 가능)
         Debug.Log("✅ 게임 데이터가 성공적으로 저장되었습니다.");
+    }
+    public float[] GetFloatArray(object obj)
+    {
+        Debug.Log(obj);
+        //  이미 float[]이면 그대로 반환
+        if (obj is float[])
+            return (float[])obj;
+
+        // object[] 배열로 변환 가능하면 float[]으로 변환
+        if (obj is object[] objArray)
+        {
+            try
+            {
+                return Array.ConvertAll(objArray, x => Convert.ToSingle(x));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 변환 실패 (object[]): {e.Message}");
+            }
+        }
+
+        // List<object> 형태라면 float[] 변환 시도
+        if (obj is List<object> list)
+        {
+            try
+            {
+                return list.ConvertAll(x => Convert.ToSingle(x)).ToArray();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 변환 실패 (List<object>): {e.Message}");
+            }
+        }
+
+        // JSON에서 오는 경우 string일 가능성이 있음
+        if (obj is string jsonString)
+        {
+            try
+            {
+                return JsonUtility.FromJson<float[]>(jsonString);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 변환 실패 (string JSON): {e.Message}");
+            }
+        }
+
+        Debug.LogError("❌ 변환 실패: 올바른 배열 형식이 아님!");
+        return new float[] { 0, 0, 0 };
     }
 
     private void SortData()
@@ -75,11 +129,15 @@ public class GameDataManager : MonoBehaviour
         chaData.storynum = CharacterManager.Instance.characterPersonalinfo.storyNum;
         chaData.attributes = JsonConvert.SerializeObject(CharacterManager.Instance.myCharacterOther);
         chaData.get_quest = JsonConvert.SerializeObject(QuestManager.Instance.questInfo);
+        float[] pos = CharacterManager.Instance.characterPersonalinfo.chaPosition;
+        float[] rot = CharacterManager.Instance.characterPersonalinfo.chaRotation;
+        chaData.position = new List<object> { pos[0], pos[1], pos[2] };
+        chaData.rotation = new List<object> { rot[0], rot[1], rot[2] };
     }
 
     private IEnumerator SendCharacterData()
     {
-        string url = ApiUrls.SaveData; // 🔹 서버 주소
+        string url = ApiUrls.SaveData;
         string jsonData = JsonConvert.SerializeObject(chaData);
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");

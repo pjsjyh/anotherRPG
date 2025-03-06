@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using CharacterInfo;
 
-public class MonsterArea : Monster
+public class MonsterArea : MonoBehaviour
 {
     // Start is called before the first frame update
-    Collider colid;
+    private Collider colid;
     public bool attackStart = false;
     void Start()
     {
@@ -17,9 +17,8 @@ public class MonsterArea : Monster
         if (attackStart)
         {
             attackStart = false;
-            // Debug.Log("공격켜짐");
             colid.enabled = true;
-            Invoke("TurnOffAttack", 0.4f);
+            Invoke(nameof(TurnOffAttack), 0.4f);
         }
     }
 
@@ -30,21 +29,27 @@ public class MonsterArea : Monster
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.CompareTag("Player"))
         {
-            //Debug.Log("monster     " + other.gameObject.name);
+            Debug.Log("플레이어야~");
+            Animator playerAnim = other.GetComponent<Animator>();
+            var character = CharacterManager.Instance.myCharacter;
+            if (character._hp > 0)
+                StartCoroutine(GetHit(playerAnim, other));
 
-            Player player = other.GetComponentInParent<Player>();
-            Animator playeranim = other.GetComponent<Animator>();
-            CharacterManager.Instance.myCharacter._hp -= 20;
-            if (CharacterManager.Instance.myCharacter._hp > 0)
-                StartCoroutine(getHit(playeranim));
             colid.enabled = false;
         }
+        else
+        {
+            TurnOffAttack();
+        }
     }
-    IEnumerator getHit(Animator playeranim)
+    IEnumerator GetHit(Animator playerAnim, Collider other)
     {
         yield return new WaitForSeconds(0.2f);
-        playeranim.SetTrigger("doGetHit");
+        var character = other.transform.parent.GetComponent<Player>();
+        var monsterDMG = transform.parent.parent.GetComponent<Monster>();
+        character.TakeDamage(monsterDMG.attack);
+
     }
 }

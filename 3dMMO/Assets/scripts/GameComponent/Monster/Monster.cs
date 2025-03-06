@@ -3,73 +3,52 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Monster : MonsterInfo
+public abstract class Monster : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public enum Type
-    {
-        slime, blueSlime
-    };
-    public Type monType;
-    public ChaInfo monInfo;
+    public int hp;
+    public int attack;
+    public int defence;
 
-    bool ischasePlayer = false;
-    bool isDead = false;
-    bool isAttack = true;
-    Transform toChase;
-    Animator monsterAnim;
-    GameObject chaseTarget;
+    protected bool ischasePlayer = false;
+    protected bool isDead = false;
+    protected bool isAttack = true;
+    protected  Transform chaseTarget;
+    protected  Animator monsterAnim;
+   // protected  GameObject chaseTarget;
     public MonsterArea monsterattackArea;
 
     public Collider meleeArea;
     public NavMeshAgent nav;
 
-    void Start()
+    protected virtual void Start()
     {
-        //nav = GetComponent<NavMeshAgent>();
+        nav = GetComponent<NavMeshAgent>();
         monsterAnim = GetComponent<Animator>();
-        createMon();
+        SetMonsterStats();
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         if (ischasePlayer && !isDead)
         {
-            chase();
+            ChaseTarget();
             monsterAnim.SetBool("isFollow", true);
             if (nav.remainingDistance < 3 && isAttack)
             {
                 isAttack = false;
-                Invoke("AttackPlayer", 4);
+                Invoke(nameof(AttackPlayer), 4);
+
             }
 
             if (nav.remainingDistance > 10 || isDead)
             {
-                ischasePlayer = false;
-                monsterAnim.SetBool("isFollow", false);
-                nav.enabled = false;
+                StopChase();
             }
         }
     }
-
-    void createMon()
-    {
-        switch (monType)
-        {
-            case Type.slime:
-                monInfo._hp = 100;
-                monInfo._attack = 30;
-                monInfo._defence = 10;
-                break;
-            case Type.blueSlime:
-                monInfo._hp = 150;
-                monInfo._attack = 50;
-                monInfo._defence = 30;
-                break;
-        }
-    }
-
+    //자식클래스에서 몬스터 기본 셋팅
+    protected abstract void SetMonsterStats();
     void AttackPlayer()
     {
         if (!isDead)
@@ -80,50 +59,67 @@ public class Monster : MonsterInfo
 
         }
     }
-    IEnumerator damage()
+    public void TakeDamage(int damage)
     {
-        yield return new WaitForSeconds(2);
+        if (!isDead)
+        {
+            hp -= damage;
 
+            if (hp <= 0)
+            {
+                MonsterDead();
+            }
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
         if (!isDead)
         {
-            nav.enabled = true;
-            ischasePlayer = true;
-            toChase = other.gameObject.transform;
-            chaseTarget = other.gameObject;
-            if (other.gameObject.tag == "WeaponSword")
+            if (other.CompareTag("Player"))
             {
+                StartChase(other.transform);
+            }
+            if (other.CompareTag("WeaponSword"))
+            {
+                //무기 종류에 따른 데미지
                 Weapon weapon = other.GetComponent<Weapon>();
-                monInfo._hp -= weapon.getAttacknum * 10;
-                Debug.Log(monInfo._hp);
+                TakeDamage(weapon.getAttacknum * 10);
                 weapon.meleeArea.enabled = false;
             }
-            if (monInfo._hp <= 0)
-                monsterDead();
 
         }
 
     }
-    void Targeting()
+    protected  void Targeting()
     {
-        Vector3 dir = chaseTarget.transform.position - transform.position;
+        Vector3 dir = chaseTarget.position - transform.position;
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 10f);
 
     }
-    void chase()
+    protected  void ChaseTarget()
     {
-        nav.SetDestination(toChase.position);
+        nav.SetDestination(chaseTarget.position);
         Targeting();
     }
-    void monsterDead()
+    protected void StartChase(Transform player)
+    {
+        chaseTarget = player;
+        ischasePlayer = true;
+        nav.enabled = true;
+    }
+    protected void StopChase()
+    {
+        ischasePlayer = false;
+        monsterAnim.SetBool("isFollow", false);
+        nav.enabled = false;
+    }
+    protected virtual void MonsterDead()
     {
         isDead = true;
         monsterAnim.SetTrigger("doDie");
-        Invoke("destroyMon", 2f);
+        Invoke(nameof(DestroyMonster), 2f);
     }
-    void destroyMon()
+    protected void DestroyMonster()
     {
         Destroy(gameObject);
     }

@@ -6,77 +6,77 @@ using CharacterInfo;
 
 public class Player : MonoBehaviour
 {
-    float vAxis;
-    float hAxis;
-    float speed = 7;
-    float gravity = -9.81f;
-    Vector3 moveVec;
-    public int _playerHP;
+
+    [SerializeField] private GameObject player;
+    [SerializeField] private CharacterController _controller;
+    [SerializeField] private Weapon weapon;
+    [SerializeField] private playerSkill playerskilltimer;
+
+    private Vector3 moveVec;
     public int attacknum = -1;
-    float jumpSpeed;
+    private  float speed = 7;
+    private  float gravity = -9.81f;
+    private  float jumpSpeed;
 
-
-    bool wDown;
     bool a1Down, a2Down, a3Down, a4Down;
-    bool jDown;
 
     public bool isAttack = true;
-
-    bool isWalk;
-    bool isRun;
+    private float hAxis, vAxis;
+    private bool wDown, jDown;
     public bool isJump = false;
-    bool isDead;
-    bool skillclickEvent = false;
+    private bool isDead = false;
+    private bool skillclickEvent = false;
 
-    [SerializeField]
-    private GameObject player;
-    public CharacterController _controller;
-    public Weapon weapon;
-    //public ChaInfo playerInfo;
-    //public ChaInfo playerInfo;
 
-    Camera _camera;
-    Animator anim;
-    Rigidbody rigid;
+    private  Camera _camera;
+    private  Animator anim;
+    private  Rigidbody rigid;
 
-    playerSkill playerskilltimer;
     private void Awake()
     {
-        //playerInfo = new ChaInfo();
-        //createPlayer();
+        var charInfo = CharacterManager.Instance.characterPersonalinfo;
+        transform.position = new Vector3(charInfo.chaPosition[0], charInfo.chaPosition[1], charInfo.chaPosition[2]);
+        transform.rotation = Quaternion.Euler(charInfo.chaRotation[0], charInfo.chaRotation[1], charInfo.chaRotation[2]);
 
     }
-    void Start()
+    private void Start()
     {
         anim = player.GetComponent<Animator>();
         _camera = Camera.main;
-        // _controller = player.GetComponent<CharacterController>();
         _controller = GetComponent<CharacterController>();
         rigid = GetComponent<Rigidbody>();
         playerskilltimer = GameObject.Find("SkillGroup").GetComponent<playerSkill>();
     }
 
 
-    void Update()
+    private void Update()
     {
         GetInput();
-        Move();
-        Turn();
-        Jump();
-        Attack();
-        CheckDie();
-        // if (_controller.isGrounded == false && !isJump)
-        // {
-        //     moveVec.y += gravity * Time.deltaTime;
-        // }
+       
         if (!isDead)
+        {
+            Move();
+            Turn();
+            Jump();
+            Attack();
             _controller.Move(moveVec * speed * Time.deltaTime);
+
+        }
+    }
+    private void FixedUpdate()
+    {
+        rigid.angularVelocity = Vector3.zero;
     }
 
-    void GetInput()
+    public void SavePositionRotation()
     {
-        hAxis = Input.GetAxisRaw("Horizontal");
-        vAxis = Input.GetAxisRaw("Vertical");
+        var charInfo = CharacterManager.Instance.characterPersonalinfo;
+        charInfo.chaPosition = new float[] { transform.position.x, transform.position.y, transform.position.z };
+        charInfo.chaRotation = new float[] { transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z };
+
+    }
+    private  void GetInput()
+    {
         wDown = Input.GetButton("Run");
         jDown = Input.GetButtonDown("Jump");
         a1Down = Input.GetButtonDown("Attack1");
@@ -85,13 +85,13 @@ public class Player : MonoBehaviour
         a4Down = Input.GetButtonDown("Attack4");
     }
 
-    void Move()
+    private void Move()
     {
-        if (isDead)
-        {
-            moveVec = Vector3.zero;
-            return;
-        }
+        //if (isDead)
+        //{
+        //    moveVec = Vector3.zero;
+        //    return;
+        //}
         Vector3 forward = transform.forward;
         Vector3 right = transform.right;
 
@@ -101,7 +101,7 @@ public class Player : MonoBehaviour
         anim.SetBool("IsWalk", moveVec != Vector3.zero);
         anim.SetBool("IsRun", wDown);
     }
-    void Turn()
+    private void Turn()
     {
 
         Vector3 dir = moveVec;
@@ -114,9 +114,9 @@ public class Player : MonoBehaviour
             this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(playerRotate), Time.deltaTime * 10f);
         }
     }
-    void Jump()
+    private void Jump()
     {
-        if (jDown && !isJump && !isDead)
+        if (jDown && !isJump)
         {
             jumpSpeed = 3f;  // 점프 힘을 설정
             anim.SetTrigger("doJump");
@@ -167,26 +167,10 @@ public class Player : MonoBehaviour
 
             weapon.Use(attacknum);
             playerskilltimer.UseSkill(attacknum);
-
-            switch (attacknum)
-            {
-                case 1:
-                    anim.SetTrigger("doAttack" + attacknum);
-                    break;
-                case 2:
-                    anim.SetTrigger("doAttack" + attacknum);
-                    break;
-                case 3:
-                    anim.SetTrigger("doAttack" + attacknum);
-                    break;
-                case 4:
-                    anim.SetTrigger("doAttack" + attacknum);
-                    break;
-            }
-            //AttackAnim(attacknum);
+            anim.SetTrigger("doAttack" + attacknum);
 
             isAttack = false;
-            Invoke("AttackOut", 0.4f);
+            Invoke(nameof(AttackOut), 0.4f);
         }
         skillclickEvent = false;
         attacknum = -1;
@@ -200,27 +184,28 @@ public class Player : MonoBehaviour
             attacknum = atk;
         }
     }
-    void CheckDie()
-    {
-        if (CharacterManager.Instance.myCharacter._hp <= 0 && !isDead)
-            OnDie();
-    }
-    void AttackOut()
+
+    private void AttackOut()
     {
         isAttack = true;
     }
-    void FreezeRotation()
-    {
-        rigid.angularVelocity = Vector3.zero;
-    }
-    private void FixedUpdate()
-    {
-        FreezeRotation();
-    }
-    void OnDie()
-    {
-        anim.SetTrigger("doDie");
-        isDead = true;
-    }
 
+
+    private void OnDie()
+    {
+        if (!isDead)
+        {
+            anim.SetTrigger("doDie");
+            isDead = true;
+            gameObject.transform.GetChild(0).tag = "DiePlayer";
+        }
+    }
+    public void TakeDamage(int damage)
+    {
+        var character = CharacterManager.Instance.myCharacter;
+        character._hp -= damage;
+        if (character._hp <= 0) character._hp = 0;
+        if (character._hp <= 0) OnDie();
+        else anim.SetTrigger("doGetHit");
+    }
 }

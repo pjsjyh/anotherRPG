@@ -25,10 +25,20 @@
         "npcMovements": [
           {
             "npcID": "NPC_Headman",
-            "targetPosition": {
-              "x": 7,
+            "startPosition": {
+              "x": -2.827792,
               "y": 0,
-              "z": 1
+              "z": 2.699961
+            },
+            "startLookPosition": {
+              "x":0,
+              "y": -159.147,
+              "z":0
+            },
+            "targetPosition": {
+              "x": 5.34,
+              "y": 0,
+              "z": 5.37
             },
             "moveSpeed": 1.5,
             "animation": "IsWalk",

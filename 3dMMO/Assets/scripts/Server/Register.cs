@@ -8,7 +8,6 @@ using System.Collections.Generic; //dictionary
 using Newtonsoft.Json;
 using ApiUtilities;
 using MyServerManager;
-using SettingAccountManager;
 using CharacterInfo;
 namespace RegisterManager
 {
@@ -63,9 +62,11 @@ namespace RegisterManager
                     else
                     {
                         Debug.Log("No error found. Processing success response.");
-                        await SettingAccount.DoSettingAccount(responseBody); // 비동기 메서드로 처리
-
+                        GameManager.Instance.saveData(responseBody);
                         response.Dispose();
+
+                        //await SettingAccount.DoSettingAccount(responseBody); // 비동기 메서드로 처리
+
                         return true;
                     }
                 }

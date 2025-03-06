@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BtnEvent : MonoBehaviour
 {
-    // Start is called before the first frame update
     public void turnOff()
     {
         this.gameObject.SetActive(false);

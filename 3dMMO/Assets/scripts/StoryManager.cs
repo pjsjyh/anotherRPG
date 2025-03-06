@@ -24,6 +24,7 @@ public class StoryManager : MonoBehaviour
     {
         public string npcID;
         public Vector3 startPosition;
+        public Vector3 startLookPosition;
         public Vector3 targetPosition;
         public float moveSpeed;
         public string animation;
@@ -89,6 +90,11 @@ public class StoryManager : MonoBehaviour
             {
                 questid = scene.quest;
                 Debug.Log("Scene Name: " + scene.sceneName);  // 씬 이름 출력
+                RunCoroutineAsTask(SettingNPC(scene));
+                if (scene.npcMovements != null)
+                {
+                    Debug.Log(scene.npcMovements);
+                }
                 foreach (var dialogue in scene.dialogues)
                 {
                     yield return StartCoroutine(ShowDialogueCoroutine(dialogue.name, dialogue.dialogue)); // await 추가
@@ -133,6 +139,51 @@ public class StoryManager : MonoBehaviour
         }
 
         chatUI.SetActive(false);
+    }
+    public IEnumerator SettingNPC(Scene scene)
+    {
+        foreach (var movement in scene.npcMovements)
+        {
+            Debug.Log(movement.startPosition);
+            if (npcGroup == null)
+            {
+                npcGroup = GameObject.Find("Scene1");
+            }
+
+            List<GameObject> npcs = new List<GameObject>();
+
+            foreach (Transform child in npcGroup.transform)
+            {
+                if (child.CompareTag("NPC"))
+                {
+                    npcs.Add(child.gameObject);
+                }
+            }
+
+            GameObject npc = null;
+
+            foreach (var obj in npcs)
+            {
+                Debug.Log(obj.name);
+                if (obj != null && obj.GetComponent<InteractPlayer>().npcCharaterID == movement.npcID)
+                {
+                    npc = obj;
+                    break;
+                }
+            }
+
+            if (npc == null)
+            {
+                Debug.LogError($"❌ NPC {movement.npcID}를 찾을 수 없음!");
+                continue;
+            }
+            if (movement != null)
+            {
+                npc.transform.position = movement.startPosition;
+                npc.transform.rotation = Quaternion.Euler(movement.startLookPosition);
+            }
+            yield return null;
+        }
     }
     public IEnumerator MoveNPCs(Scene scene)
     {

@@ -986,13 +986,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447671f3cb532274d8d7b0d31e1a5351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerHP: 0
-  attacknum: -1
-  isAttack: 1
-  isJump: 0
   player: {fileID: 8189980435056552548}
   _controller: {fileID: 255873093}
   weapon: {fileID: 1430446587}
+  playerskilltimer: {fileID: 0}
+  attacknum: -1
+  isAttack: 1
+  isJump: 0
 --- !u!4 &54270890
 Transform:
   m_ObjectHideFlags: 0
@@ -12171,23 +12171,38 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.4419
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.4419
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.4419
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
+        type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.8479676
+      value: 5.3732
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.1943338
+      value: 5.3657
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.08061032
+      value: 0.85824436
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
@@ -12197,7 +12212,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.9967457
+      value: -0.51324135
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
@@ -12212,7 +12227,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -170.753
+      value: -61.76
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aec3f65a8d5f029ecbb0f5aa10642e0e,
         type: 3}
@@ -23546,6 +23561,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defualtWord: []
   npcCharaterID: NPC_Headman
+--- !u!65 &1893038276
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1893038274}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5766866, y: 1.9061708, z: 0.5653399}
+  m_Center: {x: -0.058496114, y: 0.94936895, z: 0.056711473}
 --- !u!1 &1897846568
 GameObject:
   m_ObjectHideFlags: 0
@@ -24607,10 +24635,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2948d16f5d404d51487886a880de3423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chatUI: {fileID: 0}
-  storyName: {fileID: 0}
-  storyDescription: {fileID: 0}
-  npcGroup: {fileID: 0}
 --- !u!114 &1973048800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46360,7 +46384,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 417.81, y: -45}
-  m_SizeDelta: {x: 0, y: 90}
+  m_SizeDelta: {x: 417.81, y: 90}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!1 &9094579288170986097
 GameObject:

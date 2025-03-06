@@ -6,7 +6,7 @@ public class MouseMove : MonoBehaviour
 {
     public Transform objectTofollow;
     public float followSpeed = 100f;
-    public float sensitivity = 100f;
+    public float sensitivity = 150f;
     public float clapAngle = 70f;
 
     private float rotX;
