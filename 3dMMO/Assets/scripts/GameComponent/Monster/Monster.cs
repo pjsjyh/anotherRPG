@@ -5,13 +5,17 @@ using UnityEngine.AI;
 
 public abstract class Monster : MonoBehaviour
 {
+    public enum MonsterState { Idle, Chase, Attack, Dead }
+    private MonsterState currentState = MonsterState.Idle;
+
+
     public int hp;
     public int attack;
     public int defence;
 
     protected bool ischasePlayer = false;
     protected bool isDead = false;
-    protected bool isAttack = true;
+    protected bool isAttack = false;
     protected  Transform chaseTarget;
     protected  Animator monsterAnim;
    // protected  GameObject chaseTarget;
@@ -19,7 +23,8 @@ public abstract class Monster : MonoBehaviour
 
     public Collider meleeArea;
     public NavMeshAgent nav;
-
+    public float detectionRange = 10f; // 플레이어 감지 범위
+    public float attackRange = 2f;
     protected virtual void Start()
     {
         nav = GetComponent<NavMeshAgent>();
@@ -30,44 +35,79 @@ public abstract class Monster : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        if (ischasePlayer && !isDead)
+        if (isDead) return;
+        switch (currentState)
         {
-            ChaseTarget();
-            monsterAnim.SetBool("isFollow", true);
-            if (nav.remainingDistance < 3 && isAttack)
-            {
-                isAttack = false;
-                Invoke(nameof(AttackPlayer), 4);
-
-            }
-
-            if (nav.remainingDistance > 10 || isDead)
-            {
-                StopChase();
-            }
+            case MonsterState.Idle:
+                Idle();
+                break;
+            case MonsterState.Chase:
+                StartChase();
+                break;
+            case MonsterState.Attack:
+                Attack();
+                break;
+            case MonsterState.Dead:
+                MonsterDead();
+                break;
         }
     }
+    protected void ChangeState(MonsterState newState)
+    {
+        currentState = newState;
+    }
+
+    protected void Idle()
+    {
+        monsterAnim.SetBool("isFollow", false);
+
+        if (chaseTarget != null && nav.remainingDistance < 3)
+        {
+            ChangeState(MonsterState.Chase);
+        }
+    }
+
     //자식클래스에서 몬스터 기본 셋팅
     protected abstract void SetMonsterStats();
+    protected void Attack()
+    {
+        if (isAttack) return;
+        isAttack = true;
+        Invoke(nameof(AttackPlayer), 2);
+        Invoke(nameof(ResetAttack), 2);
+    }
     void AttackPlayer()
     {
         if (!isDead)
         {
             monsterattackArea.attackStart = true;
             monsterAnim.SetTrigger("doAttack1");
-            isAttack = true;
-
         }
+        
+    }
+    private void ResetAttack()
+    {
+        isAttack = false;
+        ChangeState(MonsterState.Chase);
     }
     public void TakeDamage(int damage)
     {
         if (!isDead)
         {
+            Debug.Log("아야");
             hp -= damage;
-
             if (hp <= 0)
             {
+                monsterAnim.ResetTrigger("doAttack1");
+                monsterAnim.ResetTrigger("isFollow");
                 MonsterDead();
+            }
+            else
+            {
+                monsterAnim.ResetTrigger("doAttack1");
+                monsterAnim.ResetTrigger("isFollow");
+
+                monsterAnim.SetTrigger("getHit");
             }
         }
     }
@@ -77,7 +117,8 @@ public abstract class Monster : MonoBehaviour
         {
             if (other.CompareTag("Player"))
             {
-                StartChase(other.transform);
+                chaseTarget = other.transform;
+                ChangeState(MonsterState.Chase);
             }
             if (other.CompareTag("WeaponSword"))
             {
@@ -101,11 +142,22 @@ public abstract class Monster : MonoBehaviour
         nav.SetDestination(chaseTarget.position);
         Targeting();
     }
-    protected void StartChase(Transform player)
+    protected void StartChase()
     {
-        chaseTarget = player;
-        ischasePlayer = true;
         nav.enabled = true;
+
+        ChaseTarget();
+        monsterAnim.SetBool("isFollow", true);
+        ischasePlayer = true;
+        if (nav.remainingDistance < 3 && !isAttack)
+        {
+            ChangeState(MonsterState.Attack);
+
+        }
+        if (nav.remainingDistance > 10)
+        {
+            ChangeState(MonsterState.Idle);
+        }
     }
     protected void StopChase()
     {

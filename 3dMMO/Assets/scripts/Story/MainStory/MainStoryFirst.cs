@@ -25,12 +25,15 @@ public class MainStoryFirst : StoryManager
             if (charaterstory == 0.0f)
             {
                 await StartStory("MainStory/MS_1", "MainFirst");
+                CharacterManager.Instance.characterPersonalinfo.storyNum += 0.1f;
+
             }
             if (charaterstory == 0.2f)
             {
                 await StartStory("MainStory/MS_1", "MainSecond");
+                CharacterManager.Instance.characterPersonalinfo.storyNum += 0.1f;
+
             }
-            CharacterManager.Instance.characterPersonalinfo.storyNum += 0.1f;
 
         }
 

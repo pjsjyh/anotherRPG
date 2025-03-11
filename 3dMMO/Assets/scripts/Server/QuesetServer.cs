@@ -43,6 +43,7 @@ public class QuesetServer : MonoBehaviour
                 string jsonResponse = request.downloadHandler.text;
                 Debug.Log($"✅ 서버 응답: {jsonResponse}");
                 Quest q = JsonConvert.DeserializeObject<Quest>(jsonResponse);
+                QuestManager.Instance.nowquest = q;
                 QuestUISetting.Instance.SettingQuestUI(q.name, q.description, q.reward, q.quest_id);
             }
         }

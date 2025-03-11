@@ -5,6 +5,7 @@ using TMPro;
 using Questsetting;
 public class AddQuestUI : MonoBehaviour
 {
+    //왼쪽 사이드 퀘스트 목록 생성
     public GameObject QuestPrefab;
     private TextMeshProUGUI prefab_title;
     private TextMeshProUGUI prefab_des;

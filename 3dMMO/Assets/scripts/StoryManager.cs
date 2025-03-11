@@ -127,19 +127,24 @@ public class StoryManager : MonoBehaviour
 
     private IEnumerator ShowDialogueFromArray(Chatword[] story)
     {
-        chatUI.SetActive(true);
-
-        for (int i = 0; i < story.Length; i++)
+        if(story!=null && story.Length != 0)
         {
-            storyName.text = story[i].name;
-            storyDescription.text = story[i].textword;
+            chatUI.SetActive(true);
 
-            yield return new WaitUntil(() => Input.GetMouseButtonDown(0)); // 클릭 대기
-            yield return new WaitForSeconds(0.5f); // 딜레이
+            for (int i = 0; i < story.Length; i++)
+            {
+                storyName.text = story[i].name;
+                storyDescription.text = story[i].textword;
+                yield return new WaitUntil(() => !Input.GetMouseButton(0));
+                yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+                yield return new WaitForSeconds(0.5f);
+            }
+
+            chatUI.SetActive(false);
         }
-
-        chatUI.SetActive(false);
+     
     }
+    //스토리에 따른 npc움직임 설정
     public IEnumerator SettingNPC(Scene scene)
     {
         foreach (var movement in scene.npcMovements)

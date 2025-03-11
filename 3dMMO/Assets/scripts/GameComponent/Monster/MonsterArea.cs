@@ -31,7 +31,6 @@ public class MonsterArea : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("플레이어야~");
             Animator playerAnim = other.GetComponent<Animator>();
             var character = CharacterManager.Instance.myCharacter;
             if (character._hp > 0)
@@ -50,6 +49,6 @@ public class MonsterArea : MonoBehaviour
         var character = other.transform.parent.GetComponent<Player>();
         var monsterDMG = transform.parent.parent.GetComponent<Monster>();
         character.TakeDamage(monsterDMG.attack);
-
+        //player로 넘겨 데미지 차감 및 애니메이션 실행
     }
 }

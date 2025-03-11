@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+
+public enum npcState { idle, mainquest, subquest, mainquestFinish, subquestFinish, gameFinish};
 [System.Serializable]
 public class Chatword
 {
@@ -22,18 +25,29 @@ public class InteractPlayer : MonoBehaviour
 {
   
     public Chatword[] defualtWord;
+    public Chatword[] mainQuestWord;
+    public Chatword[] mainQuestFinishtWord;
     StoryManager sm;
     public string npcCharaterID;
+    public npcState thisState = npcState.idle;
     private void Awake()
     {
         sm = GameObject.Find("StoryManager").GetComponent<StoryManager>();
+        NPCManager.Instance.RegisterNPC(this);
     }
     private void OnMouseDown()
     {
-        defaultChat();
+        if (thisState == npcState.idle)
+            defaultChat(defualtWord);
+        else if (thisState == npcState.mainquest)
+        {
+            defaultChat(mainQuestWord);
+        }
+            
     }
-    public async void defaultChat()
+    public async void defaultChat(Chatword[] chat)
     {
-        await sm.StartStoryFromArray(defualtWord);
+        await sm.StartStoryFromArray(chat);
     }
+
 }

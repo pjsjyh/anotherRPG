@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 )
 
 type AcceptQuestRequest struct {
@@ -59,11 +59,14 @@ func GetQuestList(c *gin.Context) {
 		questData.IsFinish = rawData["is_finish"].(bool)
 
 		// ✅ progress 값이 문자열이면 int로 변환
-		if progressStr, ok := rawData["progress"].(string); ok {
-			convertedProgress, _ := strconv.Atoi(progressStr)
-			questData.Progress = convertedProgress
+		if progressData, ok := rawData["progress"].([]interface{}); ok {
+			for _, value := range progressData {
+				if strValue, valid := value.(string); valid {
+					questData.Progress = append(questData.Progress, strValue)
+				}
+			}
 		} else {
-			questData.Progress = int(rawData["progress"].(float64)) // JSON이 float64로 변환될 수도 있음
+			questData.Progress = pq.StringArray{} // 기본값으로 빈 배열
 		}
 
 		questDataList = append(questDataList, questData)
@@ -75,9 +78,9 @@ func GetQuestList(c *gin.Context) {
 		var quest Quest
 
 		err := db.DB.QueryRow(`
-			SELECT quest_id, name, description, reward, type 
+			SELECT quest_id, name, description, reward, type, quest_type, required_npcs 
 			FROM quest WHERE quest_id = $1`, questData.QuestID).Scan(
-			&quest.QuestID, &quest.Name, &quest.Description, &quest.Reward, &quest.Type)
+			&quest.QuestID, &quest.Name, &quest.Description, &quest.Reward, &quest.Type, &quest.QuestType, &quest.RequiredNpc)
 
 		if err != nil {
 			log.Println("⚠️ 퀘스트 정보 조회 실패:", questData.QuestID, err)

@@ -1033,8 +1033,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.9296982, y: 1.0759027, z: 1.2070062}
-  m_Center: {x: 0.03515123, y: 0.45685714, z: -0.13374968}
+  m_Size: {x: 1.2584751, y: 1.0759027, z: 1.3698163}
+  m_Center: {x: 0.03464234, y: 0.45685714, z: -0.05234456}
 --- !u!114 &8310353527202524505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1053,6 +1053,8 @@ MonoBehaviour:
   monsterattackArea: {fileID: 7195811914809027640}
   meleeArea: {fileID: 7195811914809027641}
   nav: {fileID: 0}
+  detectionRange: 10
+  attackRange: 2
 --- !u!195 &7195811913878347938
 NavMeshAgent:
   m_ObjectHideFlags: 0

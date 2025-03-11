@@ -9,19 +9,20 @@
           },
           {
             "name": "촌장",
-            "dialogue": "저희는 전사님이 공주님을 구해주셨으면 좋겠어요."
+            "dialogue": "우리는 전사님이 공주님을 구해주셨으면 좋겠다네."
           },
           {
             "name": "촌장",
-            "dialogue": "하지만 아직 수련이 부족하시죠...일단 마을을 둘러보세요."
+            "dialogue": "하지만 아직 수련이 부족하시죠...일단 마을을 둘러보시길."
           },
           {
             "name": "촌장",
-            "dialogue": "좋은 하루가 되시길!"
+            "dialogue": "저기 분홍머리의 소녀가 도움을 줄 것 같은데. . ."
           }
         ],
         "quest": "ffb48950-2049-4e35-a3a2-e691a54cda0d",
         "storyNum": 0,
+        "nextNode": "MainSecond",
         "npcMovements": [
           {
             "npcID": "NPC_Headman",
@@ -31,9 +32,9 @@
               "z": 2.699961
             },
             "startLookPosition": {
-              "x":0,
+              "x": 0,
               "y": -159.147,
-              "z":0
+              "z": 0
             },
             "targetPosition": {
               "x": 5.34,
@@ -47,7 +48,7 @@
           }
         ]
       },
-     
+
       {
         "sceneName": "MainSecond",
         "dialogues": [
@@ -69,7 +70,8 @@
           }
         ],
         "quest": "1490f5c5-b236-4369-8345-3edd4a0734dd",
-        "storyNum": 0.2
+        "storyNum": 0.2,
+        "nextNode": "null"
       }
     ]
 }

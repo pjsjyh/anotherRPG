@@ -7,13 +7,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 	//"github.com/google/uuid"
 )
 
 type QuestData struct {
-	QuestID  string `json:"quest_id"`
-	Progress int    `json:"progress"`
-	IsFinish bool   `json:"is_finish"`
+	QuestID  string         `json:"quest_id"`
+	Progress pq.StringArray `json:"progress"`
+	IsFinish bool           `json:"is_finish"`
 }
 
 func AddQuestID(c *gin.Context) {
@@ -73,7 +74,7 @@ func AddQuestID(c *gin.Context) {
 	// 3️⃣ 새로운 퀘스트 JSON 생성
 	newQuest := QuestData{
 		QuestID:  quest_id,
-		Progress: 0,
+		Progress: pq.StringArray(make([]string, 0)),
 		IsFinish: false,
 	}
 	questJSON, _ := json.Marshal(newQuest) // JSON 변환

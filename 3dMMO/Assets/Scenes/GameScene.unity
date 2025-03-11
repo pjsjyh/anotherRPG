@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: d48a7646f5d0547e889733d84b50cb9f, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -15891,6 +15891,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1151328761}
   m_CullTransparentMesh: 0
+--- !u!1 &1152959760
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1152959762}
+  - component: {fileID: 1152959761}
+  m_Layer: 0
+  m_Name: NPCManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1152959761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152959760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 205078b9cb4fa724f887c1561031406e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1152959762
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152959760}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14.106947, y: 0.76901704, z: 11.170184}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1157853043
 GameObject:
   m_ObjectHideFlags: 0
@@ -20267,14 +20311,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defualtWord:
-  - name: "\uB9C8\uC744 \uC18C\uB140"
-    textword: "\uC5B4! \uC548\uB155."
-  - name: "\uB9C8\uC744 \uC18C\uB140"
-    textword: "\uC694\uC998 \uB9C8\uC744\uC774 \uC870\uC6A9\uD55C\uAC70 \uAC19\uC544..."
-  - name: "\uB9C8\uC744 \uC18C\uB140"
-    textword: "\uB9C8\uC744\uC774 \uB2E4\uC2DC \uC2DC\uB04C\uBC85\uC801 \uD574\uC84C\uC73C\uBA74
+  - name: "\uBD84\uD64D\uBA38\uB9AC\uC18C\uB140"
+    textword: "\uC694\uC998 \uB9C8\uC744\uC5D0 \uD65C\uAE30\uAC00 \uC5C6\uB124.."
+  - name: "\uBD84\uD64D\uBA38\uB9AC\uC18C\uB140"
+    textword: "\uC5BC\uB978 \uB9C8\uC744\uC5D0 \uD65C\uAE30\uAC00 \uC0DD\uACBC\uC73C\uBA74
       \uC88B\uACA0\uC5B4."
+  - name: "\uBD84\uD64D\uBA38\uB9AC\uC18C\uB140"
+    textword: "\uB204\uAD70\uAC00 \uB3C4\uC640\uC8FC\uAE38..."
+  mainQuestWord:
+  - name: "\uB9C8\uC744\uC18C\uB140"
+    textword: "\uC751? \uB10C \uB204\uAD6C\uC57C"
+  - name: "\uB9C8\uC744\uC18C\uB140"
+    textword: "\uD639\uC2DC \uC0C8\uB85C\uC6B4 \uC6A9\uC0AC?"
+  - name: "\uB9C8\uC744\uC18C\uB140"
+    textword: "\uC5B4\uC11C\uC640 \uC6B0\uB9AC \uB9C8\uC744\uC5D0."
+  mainQuestFinishtWord: []
   npcCharaterID: NPC_purpleGirl
+  thisState: 0
 --- !u!136 &1595044811
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -23559,8 +23612,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddf74a5b18901964f9ff1adee895e4b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defualtWord: []
+  defualtWord:
+  - name: "\uB9C8\uC744\uC774\uC7A5"
+    textword: "\uC5B4\uC11C\uC624\uC138\uC694 \uC774\uC138\uACC4 \uB9C8\uC744\uC785\uB2C8\uB2E4."
+  - name: "\uB9C8\uC744\uC774\uC7A5"
+    textword: "\uC774\uC138\uACC4\uC5D0\uC11C \uC624\uC2E0\uBD84\uB4E4\uC774 \uAC00\uC7A5
+      \uBA3C\uC800 \uB3C4\uCC29\uD558\uB294 \uACF3\uC774\uC8E0."
+  - name: "\uB9C8\uC744\uC774\uC7A5"
+    textword: "\uC88B\uC740 \uC5EC\uD589\uB418\uC2DC\uAE38"
+  mainQuestWord: []
+  mainQuestFinishtWord: []
   npcCharaterID: NPC_Headman
+  thisState: 0
 --- !u!65 &1893038276
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -43655,6 +43718,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7586695918809293547, guid: 245be16a4fd5f08439c07093d5ba7f6f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 245be16a4fd5f08439c07093d5ba7f6f, type: 3}

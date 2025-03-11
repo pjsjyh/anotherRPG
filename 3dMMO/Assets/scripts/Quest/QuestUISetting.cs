@@ -23,6 +23,7 @@ public class QuestUISetting : MonoBehaviour
 
     private string nowOpenQuestID;
     private string jsonFilePath = "Assets/scripts/Quest/QuestInfo.json";
+    private string[] npclist;
     private void Awake()
     {
         if (Instance == null)
@@ -79,13 +80,12 @@ public class QuestUISetting : MonoBehaviour
         string jsonData = System.IO.File.ReadAllText(jsonFilePath, Encoding.UTF8);
 
         Dictionary<string, List<QuestSet>> questDict = JsonConvert.DeserializeObject<Dictionary<string, List<QuestSet>>>(jsonData);
-        Debug.Log("!!!!" + questDict);
 
         // questnum에 해당하는 퀘스트 리스트를 찾음
         if (questDict.TryGetValue(storynum, out List<QuestSet> quests))
         {
             QuestSet quest = quests.Find(q => q.id == questnum);
-            Debug.Log(quest);
+
             if (quest != null)
             {
                 SettingQuestUI(quest.title, quest.dialogue, quest.reward, "0");
@@ -104,6 +104,7 @@ public class QuestUISetting : MonoBehaviour
     public async void ClickQuest()
     {
         await qs.addQuest(nowOpenQuestID);
+        QuestManager.Instance.NpcSetting();
         popupQuest.SetActive(false);
         questParnet.GetComponent<AddQuestUI>().makeQuestUI();
         //CharacterManager.Instance.AddQuest(questTitle, questType, requiredAmount);

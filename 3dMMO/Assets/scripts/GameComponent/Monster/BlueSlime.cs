@@ -8,7 +8,7 @@ public class BlueSlime : Monster
     protected override void SetMonsterStats()
     {
         hp = 100;
-        attack = 130;
+        attack = 10;
         defence = 10;
     }
 }
