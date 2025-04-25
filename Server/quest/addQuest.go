@@ -2,11 +2,11 @@ package quest
 
 import (
 	"Server/db"
-	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 	//"github.com/google/uuid"
 )
@@ -18,10 +18,9 @@ type QuestData struct {
 }
 
 func AddQuestID(c *gin.Context) {
-	//is_finish := c.PostForm("is_finish")
 	quest_id := c.PostForm("quest_id")
-	//progress := c.PostForm("progress")
 	character_id := c.PostForm("character_id")
+
 	if db.DB == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Database not initialized"})
 		return
@@ -52,14 +51,10 @@ func AddQuestID(c *gin.Context) {
 
 	// 3. 이미 받은 퀘스트인지 확인
 	err = db.DB.QueryRow(`
-	SELECT EXISTS(
-		SELECT 1 FROM character 
-		WHERE character_id = $1 
-		AND EXISTS (
-			SELECT 1 FROM jsonb_array_elements(get_quest) AS q
-			WHERE q->>'quest_id' = $2
-		)
-	)`, character_id, quest_id).Scan(&exists)
+SELECT EXISTS(
+	SELECT 1 FROM character_quest 
+	WHERE character_id = $1 AND quest_id = $2
+)`, character_id, quest_id).Scan(&exists)
 
 	if err != nil {
 		log.Println("❌ 캐릭터 퀘스트 확인 오류:", err)
@@ -70,24 +65,19 @@ func AddQuestID(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "Quest already assigned to character"})
 		return
 	}
+	progressJson := `{"current": 0}`
+	// 4. 퀘스트 추가
+	characterQuestID := uuid.New().String()
+	log.Println("🧪 INSERT 실행 전:", characterQuestID, character_id, quest_id)
+	log.Println("📦 progressJson 값 확인:", progressJson)
 
-	// 3️⃣ 새로운 퀘스트 JSON 생성
-	newQuest := QuestData{
-		QuestID:  quest_id,
-		Progress: pq.StringArray(make([]string, 0)),
-		IsFinish: false,
-	}
-	questJSON, _ := json.Marshal(newQuest) // JSON 변환
-
-	// JSONB 배열에 새로운 퀘스트 추가
 	_, err = db.DB.Exec(`
-		UPDATE character 
-		SET get_quest = COALESCE(get_quest, '[]'::jsonb) || $1::jsonb
-		WHERE character_id = $2`,
-		string(questJSON), character_id)
+	INSERT INTO character_quest (character_quest_id, character_id, quest_id, progress, is_finish)
+	VALUES ($1, $2, $3, $4::jsonb, $5)
+`, characterQuestID, character_id, quest_id, progressJson, false)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to insert quest into get_quest"})
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to insert quest into character_quest"})
 		return
 	}
 

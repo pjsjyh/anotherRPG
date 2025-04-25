@@ -33,8 +33,6 @@ namespace RegisterManager
             { "username", username }
         };
 
-            //var content = new FormUrlEncodedContent(values);
-           // string jsonData = JsonConvert.SerializeObject(values);//json문자열로 변환
             try
             {
                 //HttpResponseMessage response = await ServerManager.Instance.PostAsync(ApiUrls.RegisterUrl, content);
@@ -42,7 +40,6 @@ namespace RegisterManager
                 Debug.Log(response.result);
                 if (response == null)
                 {
-                    Debug.LogError("UnityWebRequest response is null. Check the request initialization.");
                     response.Dispose();
                     return false;
                 }
@@ -53,7 +50,6 @@ namespace RegisterManager
                     // JSON 응답을 분석하여 처리
                     if (responseBody.Contains("error_type"))
                     {
-                        Debug.Log("Error detected in response.");
                         duplicateErrorText.gameObject.SetActive(true);
                         duplicateErrorText.text = "Username already exists";
                         response.Dispose();
@@ -61,7 +57,6 @@ namespace RegisterManager
                     }
                     else
                     {
-                        Debug.Log("No error found. Processing success response.");
                         GameManager.Instance.saveData(responseBody);
                         response.Dispose();
 
@@ -100,54 +95,6 @@ namespace RegisterManager
                     
                 }
               
-                //else
-                //{
-                //    Debug.LogError("Unexpected error occurred.");
-                //    response.Dispose();
-                //    return false;
-                //}
-                //if (response.StatusCode == System.Net.HttpStatusCode.Conflict) // 409 Conflict 처리
-                //{
-                //    string responseBody = await response.Content.ReadAsStringAsync();
-                //    var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseBody);
-                //    foreach (var kvp in errorResponse)
-                //    {
-                //        Debug.Log($"Key: {kvp.Key}, Value: {kvp.Value}");
-                //    }
-                //    Debug.Log(errorResponse);
-
-                //    // 키가 존재하는지 먼저 확인한 후 접근
-                //    if (errorResponse.ContainsKey("error_type"))
-                //    {
-                //        if (errorResponse["error_type"] == "duplicate_id")
-                //        {
-                //            Debug.LogError("Error: ID already exists.");
-                //            duplicateErrorText.gameObject.SetActive(true);
-                //            duplicateErrorText.text = "ID already exists";
-                //        }
-                //        else if (errorResponse["error_type"] == "duplicate_name")
-                //        {
-                //            Debug.LogError("Error: Username already exists.");
-                //            duplicateErrorText.gameObject.SetActive(true);
-                //            duplicateErrorText.text = "Username already exists";
-                //        }
-                //    }
-                //    else
-                //    {
-                //        Debug.LogError("Unknown error: No error_type found.");
-                //    }
-
-                //    return false;
-                //}
-                //else
-                //{
-                //    response.EnsureSuccessStatusCode();
-                //    string responseBody = await response.Content.ReadAsStringAsync();
-                //    //await SettingAccount(responseBody);
-                //    await SettingAccount.DoSettingAccount(responseBody);
-                //    //InitializePlayer(jsonResponse["playerinfo"]);
-                //    return true;
-                //}
             }
             catch (HttpRequestException e)
             {

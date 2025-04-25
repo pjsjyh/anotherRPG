@@ -19,7 +19,6 @@ type Character struct {
 	PlayerID    string          `json:"player_id"`
 	Level       int             `json:"level"`
 	Storynum    float32         `json:"storynum"`
-	GetQuest    json.RawMessage `json:"get_quest"` // ✅ JSON 필드
 	Position    []float64       `json:"position"`
 	Rotation    []float64       `json:"rotation"`
 }
@@ -38,11 +37,11 @@ func SaveData(c *gin.Context) {
 
 	// DB에 업데이트 (예제 코드)
 	_, err := db.DB.Exec(`UPDATE character 
-    SET hp = $1, mp = $2, money = $3, level = $4, storynum = $5, attributes = $6, get_quest = $7,
-        position = $8, rotation = $9
-    WHERE character_id = $10`,
+    SET hp = $1, mp = $2, money = $3, level = $4, storynum = $5, attributes = $6,
+        position = $7, rotation = $8
+    WHERE character_id = $9`,
 		charData.HP, charData.MP, charData.Money, charData.Level,
-		charData.Storynum, charData.Attributes, charData.GetQuest,
+		charData.Storynum, charData.Attributes,
 		pq.Array(charData.Position), // 🔹 Go의 []float64 → PostgreSQL NUMERIC[]
 		pq.Array(charData.Rotation), // 🔹 Go의 []float64 → PostgreSQL NUMERIC[]
 		charData.CharacterID,

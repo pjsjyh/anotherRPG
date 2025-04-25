@@ -31,26 +31,27 @@ namespace CharacterInfo
     }
     public class CharacterManager
     {
-        private static CharacterManager instance;
+       // private static CharacterManager instance;
         private static CharacterRepository characterRepo = new CharacterRepository();
         public ChaInfo myCharacter;
         public ChaInfoOther myCharacterOther;
         public CharacterPersonalInfo characterPersonalinfo;
         public string _username = "";
+        public GameObject playerObj;
 
-        public static CharacterManager Instance
-        {
+        //public static CharacterManager Instance
+        //{
 
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new CharacterManager();
-                }
-                return instance;
-            }
-        }
-        private CharacterManager()
+        //    get
+        //    {
+        //        if (instance == null)
+        //        {
+        //            instance = new CharacterManager();
+        //        }
+        //        return instance;
+        //    }
+        //}
+        public CharacterManager()
         {
             myCharacter = new ChaInfo();
             myCharacterOther = new ChaInfoOther();
@@ -97,7 +98,6 @@ namespace CharacterInfo
             {
                 myCharacter = loadedData.myCharacter;
                 myCharacterOther = loadedData.myCharacterOther;
-                //questInfo = loadedData.questInfo;
                 characterPersonalinfo = loadedData.characterPersonalinfo;
                 _username = loadedData._username;
             }

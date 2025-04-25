@@ -30,7 +30,6 @@ public class QuestUISetting : MonoBehaviour
         {
             Instance = this;
             qs = GetComponent<QuesetServer>();
-            Initialize();
             DontDestroyOnLoad(gameObject); // 씬 전환 시에도 파괴되지 않도록 설정
 
         }
@@ -39,74 +38,34 @@ public class QuestUISetting : MonoBehaviour
             Destroy(gameObject); // 이미 인스턴스가 있으면 파괴
         }
     }
-    private void Initialize()
-    {
-        Debug.Log(QuestManager.Instance.questInfo);
-        if(QuestManager.Instance.questInfo != null)
-        {
-            questParnet.GetComponent<AddQuestUI>().makeQuestUI();
-        }
-    }
-    //private async void Start()
-    //{
-    //    await StartQuestSet();
-    //}
-    //public async Task StartQuestSet()
-    //{
-    //    await qs.FirstQuestSetting();
 
-    //}
-    public void GetQuestByID(string questID)
+    public void GetQuestByID(string questID, bool story)
     {
-        qs.GetQuestByID(questID);
+        qs.GetQuestByID(questID, story);
     }
 
-    public void PopupQuest(bool isOn, string storynum, string filename, string questnum)
+    public void SettingQuestUI()
     {
-        Debug.Log("!!!!");
-        if (isOn == false)
-        {
-            popupQuest.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("!!!!");
-            LoadQuestData(storynum, filename, questnum);
-            popupQuest.SetActive(true);
-        }
-    }
-    private void LoadQuestData(string storynum, string questnum, string title)
-    {
-        string jsonData = System.IO.File.ReadAllText(jsonFilePath, Encoding.UTF8);
-
-        Dictionary<string, List<QuestSet>> questDict = JsonConvert.DeserializeObject<Dictionary<string, List<QuestSet>>>(jsonData);
-
-        // questnum에 해당하는 퀘스트 리스트를 찾음
-        if (questDict.TryGetValue(storynum, out List<QuestSet> quests))
-        {
-            QuestSet quest = quests.Find(q => q.id == questnum);
-
-            if (quest != null)
-            {
-                SettingQuestUI(quest.title, quest.dialogue, quest.reward, "0");
-            }
-        }
-    }
-    public void SettingQuestUI(string title, string description, string reward, string getid)
-    {
-        nowOpenQuestID = getid;
+        Quest q = QuestManager.Instance.nowquest;
+        nowOpenQuestID = q.quest_id;
         popupQuest.SetActive(true);
-        questTitle.text = title;
-        questDescription.text = description;
-        questReward.text = reward;
+        questTitle.text = q.name;
+        questDescription.text = q.description;
+        questReward.text = q.reward;
     }
 
-    public async void ClickQuest()
+    public void ClickQuest()
     {
-        await qs.addQuest(nowOpenQuestID);
+        QuestManager.Instance.AddQuest();
         QuestManager.Instance.NpcSetting();
         popupQuest.SetActive(false);
-        questParnet.GetComponent<AddQuestUI>().makeQuestUI();
+        MakeQuestUI();
         //CharacterManager.Instance.AddQuest(questTitle, questType, requiredAmount);
+
+    }
+    public void MakeQuestUI()
+    {
+        questParnet.GetComponent<AddQuestUI>().makeQuestUI();
+
     }
 }

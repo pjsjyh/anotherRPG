@@ -19,7 +19,6 @@ public class CharacterData
     public float storynum;
     public string player_id;
     public string attributes;  // JSON 형식의 문자열
-    public string get_quest;   // JSON 형식의 문자열
     public List<object> position;
     public List<object> rotation;
 }
@@ -46,12 +45,15 @@ public class GameDataManager : MonoBehaviour
     public void GetSignal()
     {
         Debug.Log("🚀 게임 종료 감지됨! 데이터 저장 중...");
-        StartCoroutine(SortAndSaveData());
+        SortAndSaveData();
     }
-
-    private IEnumerator SortAndSaveData()
+    public void GetLastSignal()
     {
-        GameObject.Find("Character").GetComponent<Player>().SavePositionRotation();
+        Debug.Log("🚀 게임 종료 감지됨! 데이터 저장 중...");
+        StartCoroutine(SaveData());
+    }
+    private void SortAndSaveData()
+    {
 
         // 데이터 정리
         SortData();
@@ -59,11 +61,18 @@ public class GameDataManager : MonoBehaviour
         // 데이터 저장
         SaveGameData();
 
-        // 서버로 데이터 전송
-         yield return StartCoroutine(SendCharacterData());
-       //yield return new WaitForSeconds(0.1f);
-    }
 
+        //yield return new WaitForSeconds(0.1f);
+    }
+    private IEnumerator SaveData()
+    {
+        // 서버로 데이터 전송
+        yield return StartCoroutine(SendCharacterData());
+        yield return new WaitForEndOfFrame();
+        NetworkManager.instance.Shutdown();
+
+        //yield return new WaitForSeconds(0.1f);
+    }
     private void SaveGameData()
     {
         // 로컬 파일 저장 (필요 시 확장 가능)
@@ -121,16 +130,17 @@ public class GameDataManager : MonoBehaviour
 
     private void SortData()
     {
-        chaData.character_id = CharacterManager.Instance.characterPersonalinfo.charater_id;
-        chaData.hp = CharacterManager.Instance.myCharacter._hp;
-        chaData.mp = CharacterManager.Instance.myCharacter._mp;
-        chaData.money = CharacterManager.Instance.myCharacter._money;
-        chaData.level = CharacterManager.Instance.myCharacter._level;
-        chaData.storynum = CharacterManager.Instance.characterPersonalinfo.storyNum;
-        chaData.attributes = JsonConvert.SerializeObject(CharacterManager.Instance.myCharacterOther);
-        chaData.get_quest = JsonConvert.SerializeObject(QuestManager.Instance.questInfo);
-        float[] pos = CharacterManager.Instance.characterPersonalinfo.chaPosition;
-        float[] rot = CharacterManager.Instance.characterPersonalinfo.chaRotation;
+        var myPlayer = PlayerManager.Instance.GetMyCharacterData();
+        //myPlayer.playerObj.GetComponent<Player>().SavePositionRotation();
+        chaData.character_id = myPlayer.characterPersonalinfo.charater_id;
+        chaData.hp = myPlayer.myCharacter._hp;
+        chaData.mp = myPlayer.myCharacter._mp;
+        chaData.money = myPlayer.myCharacter._money;
+        chaData.level = myPlayer.myCharacter._level;
+        chaData.storynum = myPlayer.characterPersonalinfo.storyNum;
+        chaData.attributes = JsonConvert.SerializeObject(myPlayer.myCharacterOther);
+        float[] pos = myPlayer.characterPersonalinfo.chaPosition;
+        float[] rot = myPlayer.characterPersonalinfo.chaRotation;
         chaData.position = new List<object> { pos[0], pos[1], pos[2] };
         chaData.rotation = new List<object> { rot[0], rot[1], rot[2] };
     }
@@ -150,11 +160,11 @@ public class GameDataManager : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("✅ 캐릭터 데이터 서버에 저장 완료!");
+            Debug.Log("캐릭터 데이터 서버에 저장 완료!");
         }
         else
         {
-            Debug.LogError($"❌ 캐릭터 데이터 저장 실패: {request.error}");
+            Debug.LogError($"캐릭터 데이터 저장 실패: {request.error}");
         }
     }
 }

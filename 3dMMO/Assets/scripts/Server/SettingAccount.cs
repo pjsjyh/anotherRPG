@@ -21,7 +21,6 @@ namespace SettingAccountManager
 
             var attributesJson = playerInfo["attributes"].ToString();
 
-            CharacterManager.Instance.characterPersonalinfo.charater_id = jsonResponse["charaterID"].ToString();
 
 
 
@@ -40,55 +39,7 @@ namespace SettingAccountManager
 
                 characterData = JsonConvert.DeserializeObject<ChaInfoOther>(attributesJson);
             }
-            if (playerInfo.ContainsKey("getQuest") && playerInfo["getQuest"] != null)
-            {
-                try
-                {
-                    List<QuestInfo> questInfoList = JsonConvert.DeserializeObject<List<QuestInfo>>(playerInfo["getQuest"].ToString());
-
-                    if (questInfoList != null && questInfoList.Count > 0)
-                    {
-                        //변환 전 JSON 확인
-                        string getQuestJson = JsonConvert.SerializeObject(questInfoList);
-
-                        //List<QuestInfo>에서 List<QuestGet> 추출
-                        List<QuestGet> quests = questInfoList.Select(qi => qi.questget).ToList();
-
-                        //변환 성공 여부 확인
-                        if (quests != null && quests.Count > 0)
-                        {
-                            if (QuestManager.Instance == null)
-                            {
-                                Debug.LogError("❌ QuestUISetting.Instance가 NULL입니다!");
-                                return;
-                            }
-                            else
-                            {
-                                QuestManager.Instance.questSet.Clear();
-                                QuestManager.Instance.questInfo.Clear();
-                            }
-                           
-                            QuestManager.Instance.questSet.AddRange(quests);
-                            QuestManager.Instance.questInfo.AddRange(questInfoList);
-
-                        }
-                        else
-                        {
-                            Debug.LogError("❌ 변환된 퀘스트 리스트가 NULL이거나 비어 있음.");
-                        }
-                    }
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError($"❌ 퀘스트 JSON 파싱 오류: {e.Message}");
-                }
-            }
-            else
-            {
-                Debug.Log("⚠️ 퀘스트 데이터가 비어 있음.");
-            }
-
-
+            
 
             var playerHP = int.Parse(playerInfo["HP"].ToString());
             var playerMp = int.Parse(playerInfo["MP"].ToString());
@@ -108,17 +59,16 @@ namespace SettingAccountManager
             }
             float storyNum;
             bool isParsed = float.TryParse(playerInfo["Storynum"].ToString(), out storyNum);
-
-
+            var myPlayerSetting = GameManager.Instance.myDataSetting;
+            myPlayerSetting.characterPersonalinfo.charater_id = jsonResponse["charaterID"].ToString();
             if (isParsed)
             {
-                CharacterManager.Instance.characterPersonalinfo.storyNum = storyNum;
+                myPlayerSetting.characterPersonalinfo.storyNum = storyNum;
             }
-            CharacterManager.Instance.InitializePlayer(characterData, playerName, playerHP, playerMp, playerMoney, playerLevel, positionArray, rotationArray);
-            CharacterManager.Instance.SaveData();
-
-            await Task.CompletedTask;
+            myPlayerSetting.InitializePlayer(characterData, playerName, playerHP, playerMp, playerMoney, playerLevel, positionArray, rotationArray);
+            myPlayerSetting.SaveData();
+           await Task.CompletedTask;
         }
     }
-
+    
 }

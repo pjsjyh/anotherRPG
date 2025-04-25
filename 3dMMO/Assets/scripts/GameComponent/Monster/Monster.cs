@@ -7,11 +7,13 @@ public abstract class Monster : MonoBehaviour
 {
     public enum MonsterState { Idle, Chase, Attack, Dead }
     private MonsterState currentState = MonsterState.Idle;
-
+    protected MonsterHit monsterHitEffect;
 
     public int hp;
     public int attack;
     public int defence;
+    public int reward;
+    public string monster_id;
 
     protected bool ischasePlayer = false;
     protected bool isDead = false;
@@ -25,11 +27,13 @@ public abstract class Monster : MonoBehaviour
     public NavMeshAgent nav;
     public float detectionRange = 10f; // 플레이어 감지 범위
     public float attackRange = 2f;
+
     protected virtual void Start()
     {
         nav = GetComponent<NavMeshAgent>();
         monsterAnim = GetComponent<Animator>();
         SetMonsterStats();
+        monsterHitEffect = GetComponent<MonsterHit>();
     }
 
     // Update is called once per frame
@@ -94,16 +98,18 @@ public abstract class Monster : MonoBehaviour
     {
         if (!isDead)
         {
-            Debug.Log("아야");
             hp -= damage;
             if (hp <= 0)
             {
                 monsterAnim.ResetTrigger("doAttack1");
                 monsterAnim.ResetTrigger("isFollow");
                 MonsterDead();
+                var myPlayer = PlayerManager.Instance.GetMyCharacterData();
+                myPlayer.myCharacter._money += reward;
             }
             else
             {
+                monsterHitEffect.PlayHitEffect();
                 monsterAnim.ResetTrigger("doAttack1");
                 monsterAnim.ResetTrigger("isFollow");
 
@@ -170,6 +176,7 @@ public abstract class Monster : MonoBehaviour
         isDead = true;
         monsterAnim.SetTrigger("doDie");
         Invoke(nameof(DestroyMonster), 2f);
+        QuestManager.Instance.OnMonsterKilled(monster_id);
     }
     protected void DestroyMonster()
     {

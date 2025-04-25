@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using CharacterInfo;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] private CharacterController _controller;
     [SerializeField] private Weapon weapon;
     [SerializeField] private playerSkill playerskilltimer;
+    [SerializeField] private GameObject trailTip;
 
     private Vector3 moveVec;
     public int attacknum = -1;
@@ -29,30 +31,67 @@ public class Player : MonoBehaviour
 
 
     private  Camera _camera;
+    [SerializeField]
     private  Animator anim;
     private  Rigidbody rigid;
 
+    CharacterManager myPlayer;
+    PlayerControll myController;
     private void Awake()
     {
-        var charInfo = CharacterManager.Instance.characterPersonalinfo;
-        transform.position = new Vector3(charInfo.chaPosition[0], charInfo.chaPosition[1], charInfo.chaPosition[2]);
-        transform.rotation = Quaternion.Euler(charInfo.chaRotation[0], charInfo.chaRotation[1], charInfo.chaRotation[2]);
 
+        //var charInfo = CharacterManager.Instance.characterPersonalinfo;
+        GameManager.Instance.OnPlayerDataReady += () =>
+        {
+            myPlayer = PlayerManager.Instance.GetMyCharacterData();
+            var charInfo = myPlayer.characterPersonalinfo;
+            transform.position = new Vector3(charInfo.chaPosition[0], charInfo.chaPosition[1], charInfo.chaPosition[2]);
+            transform.rotation = Quaternion.Euler(charInfo.chaRotation[0], charInfo.chaRotation[1], charInfo.chaRotation[2]);
+
+            this.name = myPlayer._username;
+            this.transform.Find("name/NameText").GetComponent<TextMeshProUGUI>().text = myPlayer._username;
+            GameStartFade.TurnOff();
+        };
     }
     private void Start()
     {
-        anim = player.GetComponent<Animator>();
+        
+        if (player == null)
+        {
+            anim = GetComponentInChildren<Animator>();
+        }
+        else
+        {
+            anim = player.GetComponent<Animator>();
+        }
         _camera = Camera.main;
         _controller = GetComponent<CharacterController>();
         rigid = GetComponent<Rigidbody>();
         playerskilltimer = GameObject.Find("SkillGroup").GetComponent<playerSkill>();
+        //this.name = CharacterManager.Instance._username;
+        
+        // this.transform.Find("name/NameText").GetComponent<TextMeshProUGUI>().text = CharacterManager.Instance._username;
     }
 
 
-    private void Update()
+    //private void Update()
+    //{
+    //    GetInput();
+
+    //    if (!isDead)
+    //    {
+    //        Move();
+    //        Turn();
+    //        Jump();
+    //        Attack();
+    //        _controller.Move(moveVec * speed * Time.deltaTime);
+
+    //    }
+    //}
+
+    public void CustomUpdate()
     {
         GetInput();
-       
         if (!isDead)
         {
             Move();
@@ -65,12 +104,20 @@ public class Player : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rigid.angularVelocity = Vector3.zero;
+        if (rigid != null && !rigid.isKinematic)
+        {
+            rigid.angularVelocity = Vector3.zero;
+        }
     }
-
+    private void LateUpdate()
+    {
+        SavePositionRotation();
+    }
     public void SavePositionRotation()
     {
-        var charInfo = CharacterManager.Instance.characterPersonalinfo;
+        // var charInfo = CharacterManager.Instance.characterPersonalinfo;
+        if (myPlayer==null) return;
+        var charInfo = myPlayer.characterPersonalinfo;
         charInfo.chaPosition = new float[] { transform.position.x, transform.position.y, transform.position.z };
         charInfo.chaRotation = new float[] { transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z };
 
@@ -96,7 +143,6 @@ public class Player : MonoBehaviour
         Vector3 right = transform.right;
 
         moveVec = (forward * Input.GetAxisRaw("Vertical") + right * Input.GetAxisRaw("Horizontal")).normalized;
-
 
         anim.SetBool("IsWalk", moveVec != Vector3.zero);
         anim.SetBool("IsRun", wDown);
@@ -164,7 +210,7 @@ public class Player : MonoBehaviour
                 if (attacknum == 4 && playerskilltimer.canUseSkill4 == false)
                     return;
             }
-
+            StartAttack();
             weapon.Use(attacknum);
             playerskilltimer.UseSkill(attacknum);
             anim.SetTrigger("doAttack" + attacknum);
@@ -188,6 +234,7 @@ public class Player : MonoBehaviour
     private void AttackOut()
     {
         isAttack = true;
+        EndAttack();
     }
 
 
@@ -202,10 +249,22 @@ public class Player : MonoBehaviour
     }
     public void TakeDamage(int damage)
     {
-        var character = CharacterManager.Instance.myCharacter;
+        //var character = CharacterManager.Instance.myCharacter;
+        var character = myPlayer.myCharacter;
         character._hp -= damage;
         if (character._hp <= 0) character._hp = 0;
         if (character._hp <= 0) OnDie();
         else anim.SetTrigger("doGetHit");
+    }
+    void StartAttack()
+    {
+        var trail = trailTip.GetComponent<TrailRenderer>();
+        trail.Clear();
+        trail.emitting = true;
+    }
+
+    void EndAttack()
+    {
+        trailTip.GetComponent<TrailRenderer>().emitting = false;
     }
 }

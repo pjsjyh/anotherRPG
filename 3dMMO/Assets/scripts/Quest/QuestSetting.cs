@@ -29,8 +29,10 @@ namespace Questsetting
         public string description;
         public string reward;
         public string type;
-        public string quest_type;
-        public List<string> required_npcs;
+        public QuestType quest_type;
+        public List<string> target_id;
+        public int required_amount;
+        public string next_quest_id;
     }
     public class QuestGet
     {
@@ -46,4 +48,5 @@ namespace Questsetting
         [JsonProperty("Quest")]
         public Quest quest;
     }
+
 }

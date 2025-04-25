@@ -28,17 +28,18 @@ public class MyInfoSetting : MonoBehaviour
     }
     public void openPanel()
     {
-        statsTexts[0].text = CharacterManager.Instance.myCharacterOther._attack.ToString();
-        statsTexts[1].text = CharacterManager.Instance.myCharacterOther._defense.ToString();
-        statsTexts[2].text = CharacterManager.Instance.myCharacter._hp.ToString();
-        statsTexts[3].text = CharacterManager.Instance.myCharacter._mp.ToString();
-        statsTexts[4].text = CharacterManager.Instance.myCharacterOther._critical.ToString();
-        statsTexts[5].text = CharacterManager.Instance.myCharacterOther._speed.ToString();
-        statsTexts[6].text = CharacterManager.Instance.myCharacterOther._luck.ToString();
-        statsTexts[7].text = CharacterManager.Instance.myCharacter._money.ToString();
-        statsTexts[8].text = CharacterManager.Instance.myCharacterOther._gem.ToString();
-        nameText.text = CharacterManager.Instance._username;
-        levelText.text = "Lv."+CharacterManager.Instance.myCharacter._level.ToString();
+        var myPlayer = PlayerManager.Instance.GetMyCharacterData();
+        statsTexts[0].text = myPlayer.myCharacterOther._attack.ToString();
+        statsTexts[1].text = myPlayer.myCharacterOther._defense.ToString();
+        statsTexts[2].text = myPlayer.myCharacter._hp.ToString();
+        statsTexts[3].text = myPlayer.myCharacter._mp.ToString();
+        statsTexts[4].text = myPlayer.myCharacterOther._critical.ToString();
+        statsTexts[5].text = myPlayer.myCharacterOther._speed.ToString();
+        statsTexts[6].text = myPlayer.myCharacterOther._luck.ToString();
+        statsTexts[7].text = myPlayer.myCharacter._money.ToString();
+        statsTexts[8].text = myPlayer.myCharacterOther._gem.ToString();
+        nameText.text = myPlayer._username;
+        levelText.text = "Lv."+ myPlayer.myCharacter._level.ToString();
     }
 
 }

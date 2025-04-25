@@ -18,10 +18,13 @@ public class MouseMove : MonoBehaviour
     public float maxDistance;
     public float finalDistance;
     public float smoothness = 10f;
-    Player player;
+    public Player player;
+
+    private bool isInitialized = false;
+
     private void Start()
     {
-        player= GameObject.Find("Character").GetComponent<Player>();
+
         rotX = transform.localRotation.eulerAngles.x;
         rotY = transform.localRotation.eulerAngles.y;
 
@@ -31,11 +34,19 @@ public class MouseMove : MonoBehaviour
 
     private void Update()
     {
-        
+
+        if (!isInitialized) return; 
         cameramove();
+    }
+    public void InitializeCamera(Transform target, Player playerData)
+    {
+        objectTofollow = target;
+        player = playerData;
+        isInitialized = true;
     }
     private void LateUpdate()
     {
+        if (!isInitialized) return;
         transform.position = Vector3.MoveTowards(transform.position, objectTofollow.position, followSpeed*Time.deltaTime);
         finalDir = transform.TransformPoint(dirNormalized * maxDistance);
 
@@ -56,6 +67,7 @@ public class MouseMove : MonoBehaviour
     {
         if (Input.GetMouseButton(0)||Input.GetMouseButton(1))
         {
+
             rotX += -Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
             rotY += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
 

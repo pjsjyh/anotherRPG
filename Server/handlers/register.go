@@ -108,9 +108,9 @@ func createPlayerInfoInDB(id string) string {
 	// }
 	chaUUID := uuid.New().String()
 	_, err = db.DB.Exec(`
-    INSERT INTO character (character_id, hp, mp, money, level, attributes, player_id, storynum, get_quest, position, rotation) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11)`,
-		chaUUID, 100, 100, 100, 1, characterInfojsonData, id, 0, "[]", pq.Array([]float64{-3.84323, 0, 1.159021}), pq.Array([]float64{0, 3.948, 0}),
+    INSERT INTO character (character_id, hp, mp, money, level, attributes, player_id, storynum, position, rotation) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+		chaUUID, 100, 100, 100, 1, characterInfojsonData, id, 0, pq.Array([]float64{-3.84323, 0, 1.159021}), pq.Array([]float64{0, 3.948, 0}),
 	)
 	if err != nil {
 		log.Fatal(err)

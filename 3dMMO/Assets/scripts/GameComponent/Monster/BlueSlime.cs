@@ -10,5 +10,6 @@ public class BlueSlime : Monster
         hp = 100;
         attack = 10;
         defence = 10;
+        reward = 100;
     }
 }

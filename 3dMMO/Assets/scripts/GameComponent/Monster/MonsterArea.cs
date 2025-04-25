@@ -8,9 +8,15 @@ public class MonsterArea : MonoBehaviour
     // Start is called before the first frame update
     private Collider colid;
     public bool attackStart = false;
+    CharacterManager myPlayer;
     void Start()
     {
         colid = gameObject.GetComponent<Collider>();
+        GameManager.Instance.OnPlayerDataReady += () =>
+        {
+            myPlayer = PlayerManager.Instance.GetMyCharacterData();
+
+        };
     }
     void Update()
     {
@@ -32,7 +38,8 @@ public class MonsterArea : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Animator playerAnim = other.GetComponent<Animator>();
-            var character = CharacterManager.Instance.myCharacter;
+            var character = myPlayer.myCharacter;
+            Debug.Log("hp" + character._hp);
             if (character._hp > 0)
                 StartCoroutine(GetHit(playerAnim, other));
 
@@ -46,8 +53,11 @@ public class MonsterArea : MonoBehaviour
     IEnumerator GetHit(Animator playerAnim, Collider other)
     {
         yield return new WaitForSeconds(0.2f);
-        var character = other.transform.parent.GetComponent<Player>();
+
+        var character = other.transform.root.GetComponent<Player>();
+
         var monsterDMG = transform.parent.parent.GetComponent<Monster>();
+
         character.TakeDamage(monsterDMG.attack);
         //player로 넘겨 데미지 차감 및 애니메이션 실행
     }

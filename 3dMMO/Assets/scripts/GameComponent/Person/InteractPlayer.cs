@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using StoryMain;
 
-
-public enum npcState { idle, mainquest, subquest, mainquestFinish, subquestFinish, gameFinish};
+public enum npcState { idle, mainquest, domainquest, subquest, mainquestFinish, subquestFinish, gameFinish};
 [System.Serializable]
 public class Chatword
 {
@@ -29,19 +29,47 @@ public class InteractPlayer : MonoBehaviour
     public Chatword[] mainQuestFinishtWord;
     StoryManager sm;
     public string npcCharaterID;
+    public MainStoryFirst storyStarter;
     public npcState thisState = npcState.idle;
     private void Awake()
     {
         sm = GameObject.Find("StoryManager").GetComponent<StoryManager>();
         NPCManager.Instance.RegisterNPC(this);
+        if (storyStarter != null)
+        {
+            storyStarter = GameObject.Find("QuestUISetting/MainQuest/First").GetComponent<MainStoryFirst>();
+        }
+        Debug.Log(storyStarter);
     }
     private void OnMouseDown()
     {
+        Interact();
         if (thisState == npcState.idle)
             defaultChat(defualtWord);
         else if (thisState == npcState.mainquest)
         {
-            defaultChat(mainQuestWord);
+            var myPlayer = PlayerManager.Instance.GetMyCharacterData();
+            //defaultChat(mainQuestWord);
+            if (storyStarter == null)
+            {
+                storyStarter = GameObject.Find("QuestUISetting/MainQuest/First").GetComponent<MainStoryFirst>();
+                storyStarter.StartMainQuest();
+                Debug.Log(storyStarter);
+            }
+            else
+            {
+                Debug.Log(storyStarter);
+                storyStarter.StartMainQuest();
+            }
+            thisState = npcState.domainquest;
+        }
+        else if(thisState == npcState.domainquest)
+        {
+
+        }
+        else if(thisState == npcState.mainquestFinish)
+        {
+
         }
             
     }
@@ -49,5 +77,8 @@ public class InteractPlayer : MonoBehaviour
     {
         await sm.StartStoryFromArray(chat);
     }
-
+    public void Interact()
+    {
+        QuestManager.Instance.OnTalkedTo(npcCharaterID);
+    }
 }

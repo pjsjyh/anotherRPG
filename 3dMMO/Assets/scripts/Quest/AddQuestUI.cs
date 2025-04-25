@@ -16,13 +16,13 @@ public class AddQuestUI : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        foreach (QuestInfo q in QuestManager.Instance.questInfo)
+        foreach (Questver q in QuestManager.Instance.activeQuests)
         {
             GameObject questUI = Instantiate(QuestPrefab, this.transform);
             prefab_title = questUI.transform.GetChild(0).gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
             prefab_des = questUI.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
-            prefab_title.text = q.quest.name;
-            prefab_des.text = q.quest.description;
+            prefab_title.text = q.name;
+            prefab_des.text = q.description;
         }
     }
 }

@@ -86,24 +86,7 @@ namespace LoginManager
                     return false;
                 }
                 return false;
-                //HttpResponseMessage response = await ServerManager.Instance.PostAsync(ApiUrls.LoginUrl, content);
-
-                //if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) // 401 Unauthorized 처리
-                //{
-                //    duplicateErrorText.gameObject.SetActive(true);
-                //    duplicateErrorText.text = "failed login";
-                //    return false;
-                //}
-                //else
-                //{
-                //    response.EnsureSuccessStatusCode();
-                //    string responseBody = await response.Content.ReadAsStringAsync();
-                //    Debug.Log("Response: 로그인 성공" + responseBody);
-                //    //await SettingAccount(responseBody);
-                //    await SettingAccount.DoSettingAccount(responseBody);
-
-                //    return true;
-                //}
+              
             }
             catch (HttpRequestException e)
             {

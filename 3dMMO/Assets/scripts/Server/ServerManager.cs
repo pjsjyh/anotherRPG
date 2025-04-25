@@ -20,10 +20,6 @@ namespace MyServerManager
         // HttpClient는 재사용할 수 있도록 정적으로 설정
         //private readonly HttpClient client;
 
-        private ServerManager()
-        {
-        }
-
         // Singleton 인스턴스 접근자
         public static ServerManager Instance
         {
@@ -63,21 +59,7 @@ namespace MyServerManager
             return request; // 이 경우 호출한 쪽에서 Dispose()를 호출해야 함
 
         }
-        public async Task<UnityWebRequest> PostJsonAsyncJson(string url, string jsonData)
-        {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
-            UnityWebRequest request = new UnityWebRequest(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json"); // 🔹 JSON 전송
-
-            var operation = request.SendWebRequest();
-
-            while (!operation.isDone)
-                await Task.Yield();
-
-            return request; // 🚀 호출한 쪽에서 Dispose() 필요
-        }
+       
 
     }
 }

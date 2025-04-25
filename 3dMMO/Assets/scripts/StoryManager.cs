@@ -108,7 +108,7 @@ public class StoryManager : MonoBehaviour
 
         if (questid != "")
         {
-            QuestUISetting.Instance.GetQuestByID(questid);
+            QuestUISetting.Instance.GetQuestByID(questid, true);
 
         }
     }
@@ -149,7 +149,6 @@ public class StoryManager : MonoBehaviour
     {
         foreach (var movement in scene.npcMovements)
         {
-            Debug.Log(movement.startPosition);
             if (npcGroup == null)
             {
                 npcGroup = GameObject.Find("Scene1");

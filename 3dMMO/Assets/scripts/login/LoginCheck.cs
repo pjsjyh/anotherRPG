@@ -28,7 +28,8 @@ public class LoginCheck : MonoBehaviour
             string password = passwordInputField.text;
             if (id == "manager")
             {
-                CharacterManager.Instance.ManagerSetting();
+                var myPlayer = PlayerManager.Instance.GetMyCharacterData();
+                myPlayer.ManagerSetting();
                 sceneChange();
             }
             else

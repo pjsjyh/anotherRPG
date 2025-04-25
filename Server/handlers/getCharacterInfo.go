@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"Server/db"
-	"encoding/json"
 	"fmt"
 
 	"github.com/lib/pq"
@@ -18,14 +17,13 @@ type GetPlayerInfo struct {
 	PlayerID   string
 	Username   string
 	Storynum   string
-	GetQuest   json.RawMessage `json:"getQuest"`
-	Position   []float64       `json:position`
-	Rotation   []float64       `json:rotation`
+	Position   []float64 `json:position`
+	Rotation   []float64 `json:rotation`
 }
 
 func GetCharacterInfo(id, username string) GetPlayerInfo {
 	var playerInfo GetPlayerInfo
-	err := db.DB.QueryRow("SELECT character_id, hp, mp, money,level, attributes, player_id, level, storynum, get_quest::json, position, rotation FROM character WHERE player_id = $1", id).Scan(&playerInfo.ID, &playerInfo.HP, &playerInfo.MP, &playerInfo.Money, &playerInfo.Level, &playerInfo.Attributes, &playerInfo.PlayerID, &playerInfo.Username, &playerInfo.Storynum, &playerInfo.GetQuest, pq.Array(&playerInfo.Position), pq.Array(&playerInfo.Rotation))
+	err := db.DB.QueryRow("SELECT character_id, hp, mp, money,level, attributes, player_id, level, storynum,  position, rotation FROM character WHERE player_id = $1", id).Scan(&playerInfo.ID, &playerInfo.HP, &playerInfo.MP, &playerInfo.Money, &playerInfo.Level, &playerInfo.Attributes, &playerInfo.PlayerID, &playerInfo.Username, &playerInfo.Storynum, pq.Array(&playerInfo.Position), pq.Array(&playerInfo.Rotation))
 	if err != nil {
 		fmt.Println(playerInfo)
 		return playerInfo
