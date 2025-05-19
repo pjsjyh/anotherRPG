@@ -6,17 +6,18 @@ using CharacterInfo;
 public class MonsterArea : MonoBehaviour
 {
     // Start is called before the first frame update
-    private Collider colid;
+    public BoxCollider colid;
     public bool attackStart = false;
     CharacterManager myPlayer;
     void Start()
     {
-        colid = gameObject.GetComponent<Collider>();
+        colid = gameObject.GetComponent<BoxCollider>();
         GameManager.Instance.OnPlayerDataReady += () =>
         {
             myPlayer = PlayerManager.Instance.GetMyCharacterData();
 
         };
+        gameObject.GetComponent<BoxCollider>().enabled = false;
     }
     void Update()
     {

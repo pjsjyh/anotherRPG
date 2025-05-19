@@ -85,9 +85,6 @@ public class PlayerManager : MonoBehaviour
     public PlayerControll GetMyPlayerControll()
     {
         var obj = GetMyPlayerObject();
-        Debug.Log(obj);
-
-
         return obj != null ? obj.GetComponent<PlayerControll>() : null;
     }
     public CharacterManager GetMyCharacterData()

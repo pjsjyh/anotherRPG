@@ -44,7 +44,7 @@ public class QuesetServer : MonoBehaviour
   
     IEnumerator GetQuest(string questID, bool story)
     {
-        if (string.IsNullOrEmpty(questID))
+        if (string.IsNullOrEmpty(questID)|| questID==""||questID=="0")
         {
             Debug.LogError("questID가 비어 있음!");
             yield break;
@@ -109,10 +109,11 @@ public class QuesetServer : MonoBehaviour
         string url = ApiUrls.QuestList + characterId;
         UnityWebRequest request = UnityWebRequest.Get(url);
         await request.SendWebRequest();
-
+        Debug.Log("퀘스트 로드");
         if (request.result == UnityWebRequest.Result.Success)
         {
             var json = request.downloadHandler.text;
+            Debug.Log(json);
             var serverQuests = JsonConvert.DeserializeObject<List<Questver>>(json);
 
             if (serverQuests == null)
@@ -122,7 +123,10 @@ public class QuesetServer : MonoBehaviour
 
             foreach (var quest in serverQuests)
             {
-                QuestManager.Instance.activeQuests.Add(quest);
+                if(quest.isCompleted)
+                    QuestManager.Instance.activeQuests.Add(quest);
+                else
+                    QuestManager.Instance.completedQuests.Add(quest);
             }
 
 

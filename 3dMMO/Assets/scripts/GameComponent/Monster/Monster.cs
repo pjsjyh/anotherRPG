@@ -14,6 +14,7 @@ public abstract class Monster : MonoBehaviour
     public int defence;
     public int reward;
     public string monster_id;
+    public int reattackTime;
 
     protected bool ischasePlayer = false;
     protected bool isDead = false;
@@ -28,6 +29,7 @@ public abstract class Monster : MonoBehaviour
     public float detectionRange = 10f; // 플레이어 감지 범위
     public float attackRange = 2f;
 
+    public GameObject telegraphPrefab;
     protected virtual void Start()
     {
         nav = GetComponent<NavMeshAgent>();
@@ -58,6 +60,7 @@ public abstract class Monster : MonoBehaviour
     }
     protected void ChangeState(MonsterState newState)
     {
+        if (currentState == newState) return;
         currentState = newState;
     }
 
@@ -65,7 +68,7 @@ public abstract class Monster : MonoBehaviour
     {
         monsterAnim.SetBool("isFollow", false);
 
-        if (chaseTarget != null && nav.remainingDistance < 3)
+        if (chaseTarget != null && nav.remainingDistance < 3 && currentState != MonsterState.Attack)
         {
             ChangeState(MonsterState.Chase);
         }
@@ -76,23 +79,49 @@ public abstract class Monster : MonoBehaviour
     protected void Attack()
     {
         if (isAttack) return;
+        monsterAnim.SetBool("isFollow", false);
         isAttack = true;
-        Invoke(nameof(AttackPlayer), 2);
-        Invoke(nameof(ResetAttack), 2);
+        Invoke(nameof(AttackPlayer), 0.3f);
     }
     void AttackPlayer()
     {
         if (!isDead)
         {
-            monsterattackArea.attackStart = true;
-            monsterAnim.SetTrigger("doAttack1");
+            BoxCollider areaCollider = monsterattackArea.colid;
+
+            Vector3 pos = transform.position + transform.forward * 1f; 
+            Quaternion rot = Quaternion.LookRotation(transform.forward);
+            Vector3 size = Vector3.Scale(monsterattackArea.colid.size, monsterattackArea.colid.transform.lossyScale);
+            GameObject telegraph = Instantiate(telegraphPrefab);
+            var script = telegraph.GetComponent<AttackArea>();
+            script.Initialize(pos, rot, size, () =>
+            {
+                // 여기서 실제 공격 판정
+                monsterattackArea.attackStart = true;
+                monsterAnim.SetTrigger("doAttack1");
+
+                //ResetAttack();
+                Invoke(nameof(ResetAttack), reattackTime);
+            });
         }
         
     }
     private void ResetAttack()
     {
         isAttack = false;
+        float distance = Vector3.Distance(transform.position, chaseTarget.position);
+
+        if (chaseTarget == null || distance > detectionRange)
+        {
+            ChangeState(MonsterState.Idle);
+        }
+        else
+        {
+            ChangeState(MonsterState.Chase);
+        }
         ChangeState(MonsterState.Chase);
+        monsterAnim.SetBool("isFollow", true);
+
     }
     public void TakeDamage(int damage)
     {
@@ -109,10 +138,10 @@ public abstract class Monster : MonoBehaviour
             }
             else
             {
-                monsterHitEffect.PlayHitEffect();
+                if(monsterHitEffect)
+                    monsterHitEffect.PlayHitEffect();
                 monsterAnim.ResetTrigger("doAttack1");
                 monsterAnim.ResetTrigger("isFollow");
-
                 monsterAnim.SetTrigger("getHit");
             }
         }
@@ -121,7 +150,7 @@ public abstract class Monster : MonoBehaviour
     {
         if (!isDead)
         {
-            if (other.CompareTag("Player"))
+            if (other.CompareTag("Player")&&!isAttack)
             {
                 chaseTarget = other.transform;
                 ChangeState(MonsterState.Chase);
@@ -155,10 +184,11 @@ public abstract class Monster : MonoBehaviour
         ChaseTarget();
         monsterAnim.SetBool("isFollow", true);
         ischasePlayer = true;
-        if (nav.remainingDistance < 3 && !isAttack)
+        float dist = Vector3.Distance(transform.position, chaseTarget.position);
+        float angle = Vector3.Angle(transform.forward, chaseTarget.position-transform.position);
+         if (dist < 2 && !isAttack && currentState != MonsterState.Attack && angle < 3f)
         {
             ChangeState(MonsterState.Attack);
-
         }
         if (nav.remainingDistance > 10)
         {
@@ -173,6 +203,11 @@ public abstract class Monster : MonoBehaviour
     }
     protected virtual void MonsterDead()
     {
+        if (isDead) return;
+        monsterAnim.ResetTrigger("doAttack1");
+        monsterAnim.ResetTrigger("isFollow");
+        monsterAnim.ResetTrigger("getHit");
+
         isDead = true;
         monsterAnim.SetTrigger("doDie");
         Invoke(nameof(DestroyMonster), 2f);

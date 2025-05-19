@@ -25,7 +25,7 @@ public class NPCManager : MonoBehaviour
     {
         if (npcDictionary.TryGetValue(npcID, out InteractPlayer npc))
         {
-            npc.thisState = state;
+            npc.ThisState = state;
             Debug.Log($"📝 NPC {npcID} 상태 변경: {state}");
         }
     }
@@ -34,7 +34,7 @@ public class NPCManager : MonoBehaviour
     {
         if (npcDictionary.TryGetValue(npcID, out InteractPlayer npc))
         {
-            return npc.thisState;
+            return npc.ThisState;
         }
         return npcState.idle;
     }

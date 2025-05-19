@@ -23,6 +23,10 @@ public class AddQuestUI : MonoBehaviour
             prefab_des = questUI.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
             prefab_title.text = q.name;
             prefab_des.text = q.description;
+            if (q.quest_type == QuestType.Kill)
+            {
+
+            }
         }
     }
 }

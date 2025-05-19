@@ -20,7 +20,7 @@ public enum QuestType
 public class QuestGoal
 {
     public QuestType goalType;
-    public string targetId;        // 예: "Slime001", "Item_Herb", "Npc_Bob"
+    public string targetId;      
     public int requiredAmount = 1;
     public int currentAmount = 0;
 
@@ -33,7 +33,7 @@ public class QuestGoal
 }
 public class Quests : MonoBehaviour
 {
-    public Quest baseInfo;        // 퀘스트 정보 (정적)
+    public Quest baseInfo;        // 퀘스트 정보 
     public QuestGet progressInfo; // 진행 정보
 
     public bool IsCompleted => progressInfo.is_finish;

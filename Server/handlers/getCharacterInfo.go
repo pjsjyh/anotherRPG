@@ -8,22 +8,24 @@ import (
 )
 
 type GetPlayerInfo struct {
-	ID         string
-	HP         string
-	MP         string
-	Money      string
-	Level      string
-	Attributes string `json:"attributes"`
-	PlayerID   string
-	Username   string
-	Storynum   string
-	Position   []float64 `json:position`
-	Rotation   []float64 `json:rotation`
+	ID           string
+	HP           string
+	MP           string
+	Money        string
+	Level        string
+	Attributes   string `json:"attributes"`
+	PlayerID     string
+	Username     string
+	Storynum     string
+	Position     []float64 `json:position`
+	Rotation     []float64 `json:rotation`
+	CurrentStory string
+	NextStory    string
 }
 
 func GetCharacterInfo(id, username string) GetPlayerInfo {
 	var playerInfo GetPlayerInfo
-	err := db.DB.QueryRow("SELECT character_id, hp, mp, money,level, attributes, player_id, level, storynum,  position, rotation FROM character WHERE player_id = $1", id).Scan(&playerInfo.ID, &playerInfo.HP, &playerInfo.MP, &playerInfo.Money, &playerInfo.Level, &playerInfo.Attributes, &playerInfo.PlayerID, &playerInfo.Username, &playerInfo.Storynum, pq.Array(&playerInfo.Position), pq.Array(&playerInfo.Rotation))
+	err := db.DB.QueryRow("SELECT character_id, hp, mp, money,level, attributes, player_id, level, storynum,  position, rotation, currentstory, nextstory FROM character WHERE player_id = $1", id).Scan(&playerInfo.ID, &playerInfo.HP, &playerInfo.MP, &playerInfo.Money, &playerInfo.Level, &playerInfo.Attributes, &playerInfo.PlayerID, &playerInfo.Username, &playerInfo.Storynum, pq.Array(&playerInfo.Position), pq.Array(&playerInfo.Rotation), &playerInfo.CurrentStory, &playerInfo.NextStory)
 	if err != nil {
 		fmt.Println(playerInfo)
 		return playerInfo

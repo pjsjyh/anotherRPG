@@ -8,10 +8,14 @@ using TMPro;
 using CharacterInfo;
 public class StoryManager : MonoBehaviour
 {
+    public static StoryManager Instance { get; private set; }
+
     public GameObject chatUI;
     public TextMeshProUGUI storyName;
     public TextMeshProUGUI storyDescription;
     public GameObject npcGroup;
+
+    
     [System.Serializable]
     public class Dialogue
     {
@@ -38,6 +42,7 @@ public class StoryManager : MonoBehaviour
         public string sceneName;
         public List<Dialogue> dialogues;
         public string quest;
+        public string nextNode;
         public List<NPCMovement> npcMovements;
     }
 
@@ -48,13 +53,24 @@ public class StoryManager : MonoBehaviour
     }
     protected virtual void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
         if (chatUI == null)
         {
-            chatUI = GameObject.Find("GameChatPanel").transform.GetChild(0).gameObject; // 기본적으로 오브젝트를 찾아 할당
-            storyName = GameObject.Find("GameChatPanel").transform.GetChild(0).transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-            storyDescription = GameObject.Find("GameChatPanel").transform.GetChild(0).transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-
+            chatUI = GameObject.Find("GameChatPanel").transform.GetChild(0).gameObject;
+            storyName = chatUI.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            storyDescription = chatUI.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         }
+    }
+    public async void LoadMainStory()
+    {
+        var myPlayer = PlayerManager.Instance.GetMyCharacterData();
+        await StartStory(myPlayer.characterPersonalinfo.currentstory_name, myPlayer.characterPersonalinfo.nextstory_name);
     }
     public async Task StartStory(string filename, string sceneName)
     {
@@ -76,7 +92,7 @@ public class StoryManager : MonoBehaviour
 
     public IEnumerator StoryJSONtoRead(string filename, string sceneName)
     {
-        string path = Path.Combine(Application.dataPath, "scripts", "Story", filename + ".json");
+        string path = Path.Combine(Application.dataPath, "scripts", "Story", "MainStory/MS_1" + ".json");
 
         // 파일의 텍스트를 string으로 저장
         string jsonData = File.ReadAllText(path);
@@ -89,6 +105,9 @@ public class StoryManager : MonoBehaviour
             if (scene.sceneName == sceneName)
             {
                 questid = scene.quest;
+                var myPlayer = PlayerManager.Instance.GetMyCharacterData();
+                myPlayer.SettingMainStory(filename, scene.nextNode);
+
                 Debug.Log("Scene Name: " + scene.sceneName);  // 씬 이름 출력
                 RunCoroutineAsTask(SettingNPC(scene));
                 if (scene.npcMovements != null)
@@ -100,6 +119,7 @@ public class StoryManager : MonoBehaviour
                     yield return StartCoroutine(ShowDialogueCoroutine(dialogue.name, dialogue.dialogue)); // await 추가
                 }
                 RunCoroutineAsTask(MoveNPCs(scene));
+
                 break;
             }
 
@@ -111,6 +131,7 @@ public class StoryManager : MonoBehaviour
             QuestUISetting.Instance.GetQuestByID(questid, true);
 
         }
+       
     }
     public IEnumerator ShowDialogueCoroutine(string name, string description)
     {

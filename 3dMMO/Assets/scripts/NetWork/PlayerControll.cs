@@ -6,12 +6,16 @@ using CharacterInfo;
 using System;
 using SettingAccountManager;
 using TMPro;
-
+public static class LoginResultData
+{
+    public static CharacterManager LocalCharacterData;
+}
 public class PlayerControll : NetworkBehaviour
 {
     [SerializeField] private Player playerLogic;
     public CharacterManager myData;
     public PlayerRef myPlayerRef;
+   
     public void Awake()
     {
             myData = new CharacterManager();
@@ -30,6 +34,7 @@ public class PlayerControll : NetworkBehaviour
         myPlayerRef = Object.InputAuthority;
         if (Object.HasInputAuthority)
         {
+            Debug.Log("내 캐릭터 생성");
             InitMyCharacter();
             var mouseMove = Camera.main.transform.parent.GetComponent<MouseMove>();
 
@@ -45,7 +50,7 @@ public class PlayerControll : NetworkBehaviour
     private void InitMyCharacter()
     {
         myData.playerObj = gameObject;
-        StartCoroutine(SettingDataStart());
+       StartCoroutine(SettingDataStart());
         RPC_SetName(myData._username);
     }
 
@@ -67,23 +72,24 @@ public class PlayerControll : NetworkBehaviour
     }
     IEnumerator SettingDataStart()
     {
-        CharacterManager ch = GameManager.Instance.myDataSetting;
 
-        if (myData != null && ch != null)
+        var data = LoginResultData.LocalCharacterData;
+        if (myData != null && data != null)
         {
             var mouseMove = Camera.main.transform.parent.GetComponent<MouseMove>();
-            var charInfo = ch.characterPersonalinfo;
+            var charInfo = data.characterPersonalinfo;
             mouseMove.transform.position = new Vector3(charInfo.chaPosition[0], charInfo.chaPosition[1], charInfo.chaPosition[2]);
            
-            myData.myCharacter = ch.myCharacter;
-            myData.myCharacterOther = ch.myCharacterOther;
-            myData.characterPersonalinfo = ch.characterPersonalinfo;
-            myData._username = ch._username;
-            this.name = ch._username;
+            myData.myCharacter = data.myCharacter;
+            myData.myCharacterOther = data.myCharacterOther;
+            myData.characterPersonalinfo = data.characterPersonalinfo;
+            myData._username = data._username;
+            this.name = data._username;
             var nameUI = transform.Find("name/NameText");
             if (nameUI != null)
-                nameUI.GetComponent<TextMeshProUGUI>().text = ch._username;
+                nameUI.GetComponent<TextMeshProUGUI>().text = data._username;
         }
+        myData = data;
         Debug.Log("돌아가 데이터 세팅 완료");
         yield return null;
     }

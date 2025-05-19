@@ -25,6 +25,8 @@ namespace CharacterInfo
     public class CharacterPersonalInfo
     {
         public string charater_id;
+        public string nextstory_name = null;
+        public string currentstory_name = null;
         public float storyNum;
         public float[] chaPosition;
         public float[] chaRotation;
@@ -38,7 +40,16 @@ namespace CharacterInfo
         public CharacterPersonalInfo characterPersonalinfo;
         public string _username = "";
         public GameObject playerObj;
-
+        public CharacterManager Clone()
+        {
+            return new CharacterManager
+            {
+                _username = this._username,
+                myCharacter = this.myCharacter, // 얕은 복사
+                myCharacterOther = this.myCharacterOther,
+                characterPersonalinfo = this.characterPersonalinfo
+            };
+        }
         //public static CharacterManager Instance
         //{
 
@@ -69,11 +80,11 @@ namespace CharacterInfo
                 _gem = 0
             };
 
-            InitializePlayer(managerInfo, "manager", 100, 100, 999999, 999, new float[] { 0, 0, 0 }, new float[] { 0, 0, 0 });
+            InitializePlayer(managerInfo, "manager", 100, 100, 999999, 999, new float[] { 0, 0, 0 }, new float[] { 0, 0, 0 }, "MainFirst", "MainSecond");
 
         }
        
-        public void InitializePlayer(ChaInfoOther playerInfo, string username, int hp, int mp, int money, int level, float[] position, float[] rotation)
+        public void InitializePlayer(ChaInfoOther playerInfo, string username, int hp, int mp, int money, int level, float[] position, float[] rotation, string currentStory, string nextStory)
         {
             myCharacter._hp = hp;
             myCharacter._mp = mp;
@@ -83,6 +94,8 @@ namespace CharacterInfo
             _username = username;
             characterPersonalinfo.chaPosition = position;
             characterPersonalinfo.chaRotation = rotation;
+            characterPersonalinfo.currentstory_name = currentStory;
+            characterPersonalinfo.nextstory_name = nextStory;
         }
         
        
@@ -101,6 +114,11 @@ namespace CharacterInfo
                 characterPersonalinfo = loadedData.characterPersonalinfo;
                 _username = loadedData._username;
             }
+        }
+        public void SettingMainStory(string currentStory, string nextStory)
+        {
+            characterPersonalinfo.currentstory_name = currentStory;
+            characterPersonalinfo.nextstory_name = nextStory;
         }
     }
 

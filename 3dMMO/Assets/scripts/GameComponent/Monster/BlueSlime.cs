@@ -11,5 +11,6 @@ public class BlueSlime : Monster
         attack = 10;
         defence = 10;
         reward = 100;
+        reattackTime = 1;
     }
 }

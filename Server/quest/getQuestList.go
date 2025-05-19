@@ -46,7 +46,8 @@ func GetQuestList(c *gin.Context) {
 			q.reward,
 			q.quest_type,
 			q.target_id,
-			q.required_amount
+			q.required_amount,
+			q.next_quest_id
 		FROM character_quest cq
 		JOIN quest q ON cq.quest_id = q.quest_id
 		WHERE cq.character_id = $1

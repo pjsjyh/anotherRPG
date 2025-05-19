@@ -34,7 +34,6 @@ public class CharacterUISetting : MonoBehaviour
             if (Instance != this)
                 Destroy(this.gameObject);
         }
-        Debug.Log("thisisgame");
        
     }
     private void Start()

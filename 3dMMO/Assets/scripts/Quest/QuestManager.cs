@@ -13,6 +13,7 @@ public class Questver
     public string name;
     public string description;
     public bool isMainQuest;
+    public QuestType quest_type;
     public string reward;
     public List<QuestGoal> goals = new();
     public bool isCompleted;
@@ -88,6 +89,7 @@ public class QuestManager : MonoBehaviour
             description = nowquest.description,
             reward = nowquest.reward,
             isMainQuest = nowquest.type.ToLower() == "main",
+            quest_type = nowquest.quest_type,
             isCompleted = false,
             goals = new List<QuestGoal>()
         };
@@ -163,7 +165,7 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    public void OnMonsterKilled(string monsterId)
+    public async void OnMonsterKilled(string monsterId)
     {
         foreach (var quest in activeQuests)
         {
@@ -175,14 +177,23 @@ public class QuestManager : MonoBehaviour
                 }
             }
 
-            if (quest.CheckCompleted())
+            if (CheckGoalsCompletedOnly(quest.goals))
             {
-                CompleteQuest(quest.questId);
-                Debug.Log($"퀘스트 완료됨: {quest.name}");
+                await TryGetNextMainQuest(nowquest.next_quest_id);
+                Debug.Log($"퀘스트 목표 달성 완료! → NPC에게 보고 필요: {quest.name}");
             }
         }
     }
+    public bool CheckGoalsCompletedOnly(List<QuestGoal> goals)
+    {
+        foreach (var goal in goals)
+        {
+            if (!goal.IsCompleted)
+                return false;
+        }
 
+        return true; // 모든 목표 완료 → 대기 상태
+    }
     //현재 퀘스트에 따른 NPC의 상태 변화
     public void NpcSetting()
     {

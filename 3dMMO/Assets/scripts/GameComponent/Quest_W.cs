@@ -5,10 +5,10 @@ using UnityEngine;
 public class Quest_W : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject followplayer;
+    private GameObject followplayer;
     void Start()
     {
-        
+        followplayer = Camera.main.gameObject;
     }
 
     // Update is called once per frame

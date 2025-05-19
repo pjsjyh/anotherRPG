@@ -29,49 +29,67 @@ public class InteractPlayer : MonoBehaviour
     public Chatword[] mainQuestFinishtWord;
     StoryManager sm;
     public string npcCharaterID;
-    public MainStoryFirst storyStarter;
-    public npcState thisState = npcState.idle;
-    private void Awake()
+    public GameObject mainButton;
+    public bool isInteractOK = true;
+
+    private npcState _thisState = npcState.idle;
+    public npcState ThisState
+    {
+        get => _thisState;
+        set
+        {
+            if (_thisState != value)
+            {
+                _thisState = value;
+                OnStateChanged(_thisState); // 상태가 바뀔 때 실행될 메서드
+            }
+        }
+    }
+
+
+    private void Start()
     {
         sm = GameObject.Find("StoryManager").GetComponent<StoryManager>();
         NPCManager.Instance.RegisterNPC(this);
-        if (storyStarter != null)
+
+    }
+    private void OnStateChanged(npcState newState)
+    {
+        switch (newState)
         {
-            storyStarter = GameObject.Find("QuestUISetting/MainQuest/First").GetComponent<MainStoryFirst>();
+            case npcState.mainquest:
+                mainButton.SetActive(true);
+                break;
+            case npcState.domainquest:
+                isInteractOK = true;
+                break;
+            case npcState.mainquestFinish:
+
+                isInteractOK = true;
+                mainButton.SetActive(false);
+                break;
         }
-        Debug.Log(storyStarter);
     }
     private void OnMouseDown()
     {
+        mainButton.SetActive(false);
         Interact();
-        if (thisState == npcState.idle)
+        if (_thisState == npcState.idle)
             defaultChat(defualtWord);
-        else if (thisState == npcState.mainquest)
+        else if (_thisState == npcState.mainquest)
         {
-            var myPlayer = PlayerManager.Instance.GetMyCharacterData();
-            //defaultChat(mainQuestWord);
-            if (storyStarter == null)
-            {
-                storyStarter = GameObject.Find("QuestUISetting/MainQuest/First").GetComponent<MainStoryFirst>();
-                storyStarter.StartMainQuest();
-                Debug.Log(storyStarter);
-            }
-            else
-            {
-                Debug.Log(storyStarter);
-                storyStarter.StartMainQuest();
-            }
-            thisState = npcState.domainquest;
+            isInteractOK = false;
+            StoryManager.Instance.LoadMainStory();
+            _thisState = npcState.domainquest;
         }
-        else if(thisState == npcState.domainquest)
+        else if(_thisState == npcState.domainquest)
         {
-
         }
-        else if(thisState == npcState.mainquestFinish)
+        else if(_thisState == npcState.mainquestFinish)
         {
-
+           
         }
-            
+        OnStateChanged(_thisState);
     }
     public async void defaultChat(Chatword[] chat)
     {

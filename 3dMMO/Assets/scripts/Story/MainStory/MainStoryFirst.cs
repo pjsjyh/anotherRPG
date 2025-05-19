@@ -14,7 +14,7 @@ namespace StoryMain
         {
             GameManager.Instance.OnPlayerDataReady += async () =>
             {
-                await LoadStory();
+                //await LoadStory();
             };
             //await MainQuestStart();
 
@@ -45,7 +45,12 @@ namespace StoryMain
                     myPlayer.characterPersonalinfo.storyNum += 0.1f;
 
                 }
+                if (charaterstory == 0.4f)
+                {
+                    await StartStory("MainStory/MS_1", "MainThird");
+                    myPlayer.characterPersonalinfo.storyNum += 0.1f;
 
+                }
             }
 
             return;

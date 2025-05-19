@@ -39,7 +39,8 @@ namespace SettingAccountManager
 
                 characterData = JsonConvert.DeserializeObject<ChaInfoOther>(attributesJson);
             }
-            
+
+            var loginData = new CharacterManager();
 
             var playerHP = int.Parse(playerInfo["HP"].ToString());
             var playerMp = int.Parse(playerInfo["MP"].ToString());
@@ -48,6 +49,8 @@ namespace SettingAccountManager
             var playerName = playerInfo["Username"].ToString();
             var playerPosition = playerInfo["Position"];
             var playerRotation = playerInfo["Rotation"];
+            var playerCurrentStory = playerInfo["CurrentStory"].ToString();
+            var playerNextStory = playerInfo["NextStory"].ToString();
             float[] positionArray= { 0,0,0}, rotationArray= { 0,0,0};
             if (playerPosition is JArray jArray)
             {
@@ -59,15 +62,39 @@ namespace SettingAccountManager
             }
             float storyNum;
             bool isParsed = float.TryParse(playerInfo["Storynum"].ToString(), out storyNum);
+            var charaterID = jsonResponse["charaterID"].ToString();
+
             var myPlayerSetting = GameManager.Instance.myDataSetting;
-            myPlayerSetting.characterPersonalinfo.charater_id = jsonResponse["charaterID"].ToString();
+
             if (isParsed)
             {
                 myPlayerSetting.characterPersonalinfo.storyNum = storyNum;
             }
-            myPlayerSetting.InitializePlayer(characterData, playerName, playerHP, playerMp, playerMoney, playerLevel, positionArray, rotationArray);
+            myPlayerSetting.InitializePlayer(characterData, playerName, playerHP, playerMp, playerMoney, playerLevel, positionArray, rotationArray, playerCurrentStory, playerNextStory);
             myPlayerSetting.SaveData();
-           await Task.CompletedTask;
+
+            loginData.characterPersonalinfo = new CharacterPersonalInfo
+            {
+                charater_id = charaterID,
+                storyNum = storyNum,
+                chaPosition = positionArray,
+                chaRotation = rotationArray,
+                currentstory_name = playerCurrentStory,
+                nextstory_name = playerNextStory
+            };
+
+            // ✅ 나머지 기본 정보
+            loginData._username = playerName;
+            loginData.myCharacterOther = characterData; // 필요에 따라 채워넣기
+            loginData.myCharacter._hp = playerHP;
+            loginData.myCharacter._mp = playerMp;
+            loginData.myCharacter._level = playerLevel;
+            loginData.myCharacter._money = playerMoney;
+
+            // ✅ 전역 저장
+            LoginResultData.LocalCharacterData = loginData;
+
+            await Task.CompletedTask;
         }
     }
     

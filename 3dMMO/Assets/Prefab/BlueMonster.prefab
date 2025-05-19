@@ -1069,11 +1069,14 @@ MonoBehaviour:
   defence: 0
   reward: 0
   monster_id: bluemonster
+  reattackTime: 0
   monsterattackArea: {fileID: 7195811914809027640}
   meleeArea: {fileID: 7195811914809027641}
   nav: {fileID: 0}
   detectionRange: 10
   attackRange: 2
+  telegraphPrefab: {fileID: 4860678684716233986, guid: 541fc3b6aa62f6e499b1a3c67468cdb7,
+    type: 3}
 --- !u!195 &7195811913878347938
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1241,7 +1244,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 2.1708078}
   m_Center: {x: 0, y: 0, z: 0.42116326}
@@ -1257,6 +1260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1bd67a80f410034b93a3f5b5edd3a3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  colid: {fileID: 7195811914809027641}
   attackStart: 0
 --- !u!1 &7195811915083835332
 GameObject:
