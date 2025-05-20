@@ -149,7 +149,7 @@ public class QuestManager : MonoBehaviour
 
             if (quest.CheckCompleted())
             {
-                completed.Add(quest); // ✅ 리스트만 모아둠
+                completed.Add(quest); // 리스트만 모아둠
             }
         }
         foreach (var quest in completed)
