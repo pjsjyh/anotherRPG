@@ -62,3 +62,8 @@ https://www.youtube.com/watch?v=48EXLYf6Gxs
 #### 5) 카메라
    - 카메라가 플레이어를 따라다닐 수 있도록 구현.
    - 장애물이 있는지 없는지에 따라 위치 변화.
+#### 6) 몬스터
+#### ![image](https://github.com/user-attachments/assets/b6507a65-c8b0-4489-909c-a9efac9beb36)
+   - 범위 내에 플레이어가 들어오면 추적.거리가 멀어지면 추적 종료.
+   - 장판 형식의 공격 타입.
+   - 피격시 빨간 효과 표출.
