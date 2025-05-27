@@ -49,7 +49,8 @@ https://www.youtube.com/watch?v=48EXLYf6Gxs
    - 로딩될 때 퀘스트 목록과 현재 받았던 퀘스트 목록을 합쳐 셋팅진행.
 #### ![image](https://github.com/user-attachments/assets/d5fabee9-2908-44ee-ae01-94bab56820c4)
    - 퀘스트를 받을 땐 항상 다음과 같은 창으로 퀘스트 받기 창이 뜬다.
-#### ![image](https://github.com/user-attachments/assets/26f735c9-aefd-4964-a5a5-cac3cd43233b)
+#### ![image](https://github.com/user-attachments/assets/94e2dbab-bfb6-43a5-9487-2acd47d39cf7)
+   - 퀘스트를 받을 수 있는 NPC가 있다면 UI 표출.
    - 좌측에 받은 퀘스트 목록 띄워주기.
    - 받은 퀘스트가 있다면 로그인 시 불러와 셋팅.
 #### 4) 플레이어
