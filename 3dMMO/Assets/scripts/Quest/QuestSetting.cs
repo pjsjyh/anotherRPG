@@ -8,19 +8,19 @@ using Newtonsoft.Json;
 namespace Questsetting
 {
 
-    [System.Serializable]
-    public class QuestSet
-    {
-        public string id;
-        public string title;
-        public string dialogue;
-        public string reward;
-    }
-    [System.Serializable]
-    public class QuestList
-    {
-        public List<QuestSet> quest0;
-    }
+    //[System.Serializable]
+    //public class QuestSet
+    //{
+    //    public string id;
+    //    public string title;
+    //    public string dialogue;
+    //    public string reward;
+    //}
+    //[System.Serializable]
+    //public class QuestList
+    //{
+    //    public List<QuestSet> quest0;
+    //}
 
     public class Quest
     {
@@ -34,19 +34,11 @@ namespace Questsetting
         public int required_amount;
         public string next_quest_id;
     }
-    public class QuestGet
-    {
-        public string quest_id;
-        public bool is_finish;
-        public List<string> progress;
-    }
-    public class QuestInfo
-    {
-        [JsonProperty("QuestData")]
-        public QuestGet questget;
-
-        [JsonProperty("Quest")]
-        public Quest quest;
-    }
+    //public class QuestGet
+    //{
+    //    public string quest_id;
+    //    public bool is_finish;
+    //    public List<string> progress;
+    //}
 
 }

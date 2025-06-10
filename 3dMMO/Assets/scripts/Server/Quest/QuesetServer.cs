@@ -39,14 +39,14 @@ public class QuesetServer : MonoBehaviour
     //quest id를 이용해 quest정보 불러오기
     public void GetQuestByID(string questID, bool story=false)
     {
-        StartCoroutine(GetQuest(questID, story));
+        if(questID !=null)
+            StartCoroutine(GetQuest(questID, story));
     }
   
     IEnumerator GetQuest(string questID, bool story)
     {
-        if (string.IsNullOrEmpty(questID)|| questID==""||questID=="0")
+        if (string.IsNullOrEmpty(questID)|| questID==""||questID=="0"|| questID == "clear")
         {
-            Debug.LogError("questID가 비어 있음!");
             yield break;
         }
 
@@ -67,6 +67,7 @@ public class QuesetServer : MonoBehaviour
                 Debug.Log($"서버 응답: {jsonResponse}");
                 Quest q = JsonConvert.DeserializeObject<Quest>(jsonResponse);
                 QuestManager.Instance.nowquest = q;
+                Debug.Log("퀘스트 가져옴 " + q.next_quest_id+" "+q.target_id[0]);
                 if (story) openQuestUI();
 
             }
@@ -78,12 +79,12 @@ public class QuesetServer : MonoBehaviour
 
     }
 
-
+    //퀘스트 받으면 서버에 받았다고 전달
     public async Task SendQuestToServer(Questver quest)
     {
         var myPlayer = PlayerManager.Instance.GetMyCharacterData();
         var goal = quest.goals[0]; // 현재 목표 하나일 때 기준
-
+        Debug.Log(goal.currentAmount+" "+goal.requiredAmount);
         var values = new Dictionary<string, string>
     {
         { "quest_id", quest.questId },
@@ -104,6 +105,7 @@ public class QuesetServer : MonoBehaviour
             Debug.LogError("서버 퀘스트 저장 실패: " + response.error);
         }
     }
+    //서버에서 자신이 받은 퀘스트 목록 불러오기
     public async Task LoadSavedQuests(string characterId)
     {
         string url = ApiUrls.QuestList + characterId;
@@ -113,7 +115,7 @@ public class QuesetServer : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             var json = request.downloadHandler.text;
-            Debug.Log(json);
+            if (json == null) return;
             var serverQuests = JsonConvert.DeserializeObject<List<Questver>>(json);
 
             if (serverQuests == null)
@@ -123,13 +125,20 @@ public class QuesetServer : MonoBehaviour
 
             foreach (var quest in serverQuests)
             {
-                if(quest.isCompleted)
+                Debug.Log(quest.isCompleted + " " + quest.next_quest_id);
+                if (!quest.isCompleted)
+                {
+                    quest.target_pos.Add(NPCManager.Instance.GetNPCpos(quest.target_id[0]));
                     QuestManager.Instance.activeQuests.Add(quest);
+                    if (quest.type=="main")
+                    {
+                        Debug.Log(quest.target_id[0]);
+                        NPCManager.Instance.SetNPCState(quest.target_id[0], npcState.mainquest);
+                    }
+                }
                 else
                     QuestManager.Instance.completedQuests.Add(quest);
             }
-
-
             Debug.Log("서버 퀘스트 로드 완료!");
             QuestUISetting.Instance.MakeQuestUI();
         }
@@ -138,12 +147,10 @@ public class QuesetServer : MonoBehaviour
             Debug.LogError($"퀘스트 불러오기 실패: {request.error}");
         }
     }
-    public async Task<Quest> GetNextMainQuest()
+    public async Task<Quest> GetNextMainQuest(string completedQuestId)
     {
-        // ✅ 서버 요청해서 다음 메인퀘스트 받아오기
-        // 예시: await 서버통신
-        // 서버에서는 "현재 플레이어의 다음 메인 퀘스트"를 판단해서 하나 내려줘야 해
-        GetQuestByID(QuestManager.Instance.nowquest.next_quest_id);
+        // 서버 요청해서 다음 메인퀘스트 받아오기
+        GetQuestByID(completedQuestId);
         Quest nextQuest = null;
 
         // 가짜 테스트용 코드

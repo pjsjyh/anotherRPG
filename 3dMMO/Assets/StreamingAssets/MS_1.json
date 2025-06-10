@@ -1,0 +1,146 @@
+﻿{
+  "story": [
+    {
+      "nextNPCID": "NPC_purpleGirl",
+      "sceneName": "MainFirst",
+      "dialogues": [
+        {
+          "name": "촌장",
+          "dialogue": "어서오게 전사여."
+        },
+        {
+          "name": "촌장",
+          "dialogue": "우리는 전사님이 공주님을 구해주셨으면 좋겠다네."
+        },
+        {
+          "name": "촌장",
+          "dialogue": "하지만 아직 수련이 부족하시죠...일단 마을을 둘러보시길."
+        },
+        {
+          "name": "촌장",
+          "dialogue": "저기 분홍머리의 소녀가 도움을 줄 것 같은데. . ."
+        }
+      ],
+      "quest": "ffb48950-2049-4e35-a3a2-e691a54cda0d",
+      "storyNum": 0,
+      "nextNode": "MainSecond",
+      "npcMovements": [
+        {
+          "npcID": "NPC_Headman",
+          "startPosition": {
+            "x": -2.827792,
+            "y": 0,
+            "z": 2.699961
+          },
+          "startLookPosition": {
+            "x": 0,
+            "y": -159.147,
+            "z": 0
+          },
+          "targetPosition": {
+            "x": 5.34,
+            "y": 0,
+            "z": 5.37
+          },
+          "moveSpeed": 1.5,
+          "animation": "IsWalk",
+          "lookAtTarget": true,
+          "waitTime": 2.0
+        }
+      ]
+    },
+
+    {
+      "nextNPCID": "NPC_purpleGirl",
+      "sceneName": "MainSecond",
+      "dialogues": [
+        {
+          "name": "마을 소녀",
+          "dialogue": "안녕! 너가 이번에 온 용사니?!"
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "용사가 된지 얼마 안된 것 같아보이네."
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "마을에 온걸 환영해!"
+        }
+      ],
+      "quest": "clear",
+      "storyNum": 0.2,
+      "nextNode": "MainThird"
+    },
+    {
+      "nextNPCID": "NPC_purpleGirl",
+      "sceneName": "MainThird",
+      "dialogues": [
+        {
+          "name": "마을 소녀",
+          "dialogue": "적응 할 겸 몬스터 2마리만 잡아보는거 어때?"
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "마을 밖을 나가면 파란 슬라임이 있을꺼야!"
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "몸 조심해!"
+        }
+      ],
+      "quest": "1490f5c5-b236-4369-8345-3edd4a0734dd",
+      "storyNum": 0.2,
+      "nextNode": "MainFourth"
+    },
+    {
+      "nextNPCID": "NPC_purpleGirl",
+      "sceneName": "MainFourth",
+      "dialogues": [
+        {
+          "name": "마을 소녀",
+          "dialogue": "대단해 벌써 몬스터를 잡다니!"
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "용사로써 재능이 보인다."
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "적응 좀 된거 같은데 더 멀리 나가봐!"
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "너라면 할 수 있어 화이팅!"
+        }
+      ],
+      "quest": "clear",
+      "storyNum": 0.4,
+      "nextNode": "MainFifth"
+    },
+    {
+      "nextNPCID": "NPC_purpleGirl",
+      "sceneName": "MainFifth",
+      "dialogues": [
+        {
+          "name": "마을 소녀",
+          "dialogue": "음... 전투의 재능도 있고"
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "이번엔 아이템을 구매하는 곳을 알려줄게!"
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "마을 안쪽에 톰 아저씨라고 상점이 있어"
+        },
+        {
+          "name": "마을 소녀",
+          "dialogue": "한번 구경가봐!"
+        }
+      ],
+      "quest": "07f48036-c5a4-4411-bb8c-9bf81116669d",
+      "storyNum": 0.4,
+      "nextNode": "MainSixth"
+    }
+  ]
+}

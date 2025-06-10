@@ -26,7 +26,7 @@ namespace LoginManager
             { "id", id },
             { "password", password }
         };
-
+            Debug.Log(id + "     " + password);
             //var content = new FormUrlEncodedContent(values);
 
             try

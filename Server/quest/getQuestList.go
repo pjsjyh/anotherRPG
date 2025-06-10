@@ -15,6 +15,7 @@ type QuestProgressData struct {
 	Name           string         `json:"name"`
 	Description    string         `json:"description"`
 	Reward         string         `json:"reward"`
+	Type           string         `json:"type"`
 	QuestType      string         `json:"questType"`
 	TargetID       pq.StringArray `json:"targetId"`       // PostgreSQL 배열
 	RequiredAmount int            `json:"requiredAmount"` // 목표 수치
@@ -44,6 +45,7 @@ func GetQuestList(c *gin.Context) {
 			q.name,
 			q.description,
 			q.reward,
+			q.type,
 			q.quest_type,
 			q.target_id,
 			q.required_amount,
@@ -65,7 +67,7 @@ func GetQuestList(c *gin.Context) {
 		var quest QuestProgressData
 		var progressRaw []byte
 
-		err := rows.Scan(&quest.QuestID, &progressRaw, &quest.IsFinish, &quest.Name, &quest.Description, &quest.Reward, &quest.QuestType, &quest.TargetID, &quest.RequiredAmount, &quest.NextQuestID)
+		err := rows.Scan(&quest.QuestID, &progressRaw, &quest.IsFinish, &quest.Name, &quest.Description, &quest.Reward, &quest.Type, &quest.QuestType, &quest.TargetID, &quest.RequiredAmount, &quest.NextQuestID)
 		if err != nil {
 			log.Println("❌ Row 스캔 실패:", err)
 			continue

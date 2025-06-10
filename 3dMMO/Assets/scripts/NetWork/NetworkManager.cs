@@ -41,7 +41,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     private async void Start()
     {
-        await StartNetwork();
+        //await StartNetwork();
 
     }
     void OnDestroy()
@@ -53,15 +53,20 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         else
         {
             DontDestroyOnLoad(networkRunner.gameObject);
-            Debug.Log($"⚠ NetworkRunner 상태 확인: {networkRunner.State}");
+            Debug.Log($"NetworkRunner 상태 확인: {networkRunner.State}");
         }
+    }
+    public async Task StartNetworkFunc()
+    {
+        Debug.Log("다음작업 시작");
+        await StartNetwork();
     }
     public async Task StartNetwork()
     {
         PhotonAppSettings settings = Resources.Load<PhotonAppSettings>("PhotonAppSettings");
         if (settings == null)
         {
-            Debug.LogError("❌ Photon Fusion App ID가 설정되지 않았습니다!");
+            Debug.LogError("Photon Fusion App ID가 설정되지 않았습니다!");
             return;
         }
 
@@ -69,19 +74,19 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         var config = NetworkProjectConfig.Global;
         if (config == null)
         {
-            Debug.LogError("❌ NetworkProjectConfig가 올바르게 로드되지 않았습니다! Fusion 설정을 확인하세요.");
+            Debug.LogError("NetworkProjectConfig가 올바르게 로드되지 않았습니다! Fusion 설정을 확인하세요.");
             return;
         }
         var result = await networkRunner.JoinSessionLobby(SessionLobby.ClientServer);
 
         if (result.Ok)
         {
-            Debug.Log($"✅ 로비 입장 성공, 세션 목록 기다리는 중... {result.ShutdownReason}");
+            Debug.Log($"로비 입장 성공, 세션 목록 기다리는 중... {result.ShutdownReason}");
             // 세션 목록은 OnSessionListUpdated에서 처리됨
         }
         else
         {
-            Debug.LogError("❌ 로비 입장 실패");
+            Debug.LogError("로비 입장 실패");
         }
 
     }
@@ -116,7 +121,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
             if (result.Ok)
             {
-                Debug.Log($"✅ 네트워크 시작 성공! 세션 이름: {sessionName}");
+                Debug.Log($"네트워크 시작 성공! 세션 이름: {sessionName}");
                 
                 //var parameters = new NetworkLoadSceneParameters()
                 //{
@@ -126,7 +131,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
                 //if (!sceneRef.IsValid)
                 //{
-                //    Debug.LogError("🚫 유효하지 않은 씬 경로입니다!");
+                //    Debug.LogError("유효하지 않은 씬 경로입니다!");
                 //}
                 //else
                 //{
@@ -136,19 +141,19 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             }
             else
             {
-                Debug.LogError($"❌ StartGame() 실패: {result.ShutdownReason}");
+                Debug.LogError($"StartGame() 실패: {result.ShutdownReason}");
             }
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"❌StartGame() 실패: {e.Message}");
+            Debug.LogError($"StartGame() 실패: {e.Message}");
         }
     }
 
     public IEnumerator StratSpawn()
     {
 
-        Debug.Log("🎯 씬 로딩 완료됨 → 캐릭터 생성 시작");
+        Debug.Log("씬 로딩 완료됨 → 캐릭터 생성 시작");
         
         float timeout = 5f;
         while (!spawnReady && timeout > 0f)
@@ -171,7 +176,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     private IEnumerator SpawnPlayerCoroutineClient()
     {
 
-        Debug.Log("생성하러들어옴");
         yield return new WaitForSeconds(0.2f);
         foreach (var player in networkRunner.ActivePlayers)
         {
@@ -185,7 +189,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         {
             if (networkRunner.TryGetPlayerObject(networkRunner.LocalPlayer, out var playerObject) && playerObject != null)
             {
-                Debug.Log("✅ 클라이언트 → 내 캐릭터 오브젝트 찾음!");
+                Debug.Log("클라이언트 → 내 캐릭터 오브젝트 찾음!");
 
                 // 이름 설정 (옵션)
                 //playerObject.name = CharacterManager.Instance._username;
@@ -203,7 +207,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             yield return null;
         }
         Debug.LogWarning($"[클라이언트] 캐릭터 없음. ActivePlayers: {string.Join(", ", networkRunner.ActivePlayers)}");
-        Debug.LogWarning("⚠ 클라이언트 → 시간 초과: 캐릭터 오브젝트를 찾지 못했습니다.");
+        Debug.LogWarning("클라이언트 → 시간 초과: 캐릭터 오브젝트를 찾지 못했습니다.");
 
     }
     private IEnumerator SpawnPlayerCoroutine(PlayerRef player)
@@ -226,7 +230,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         Vector3 spawnPosition = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
         //var charInfo = CharacterManager.Instance.characterPersonalinfo;
         //spawnPosition = new Vector3(charInfo.chaPosition[0], charInfo.chaPosition[1], charInfo.chaPosition[2]);
-        Debug.Log("SpawnAsync 실행 시작");
+
         networkRunner.ProvideInput = true;
 
 
@@ -267,89 +271,24 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             {
                 yield break;
             }
-            NetworkObject playerObj = null;
-
-         
-            // 내 캐릭터인 경우만 데이터 셋팅 트리거
-            Debug.Log(player + " " + networkRunner.LocalPlayer);
-            if (player == networkRunner.LocalPlayer)
-            {
-                Debug.Log("콜");
-                
-            }
-            else
-            {
-                Debug.Log("실행안됨");
-            }
-            //while (!networkRunner.TryGetPlayerObject(player, out playerObj))
-            //{
-            //    Debug.Log($"Trying GetPlayerObject for: {player}");
-
-            //    yield return null;
-            //}
-
-            //Debug.Log($"✅ [서버 Spawn] {player} 객체 등록됨: {playerObj.name}");
-
-            // PlayerManager 등록
-            //PlayerManager.Instance.RegisterPlayer(player, playerObj);
 
         }
         else
         {
-            Debug.LogError("❌ 클라이언트가 Spawn을 시도했습니다! 이건 허용되지 않음");
+            Debug.LogError("클라이언트가 Spawn을 시도했습니다! 이건 허용되지 않음");
         }
-        try
-        {
-
-            
-           
-             // ✅ `TrySpawn()` 실행
-            //            NetworkSpawnStatus status = networkRunner.TrySpawn(
-            //                networkPrefab, // ✅ `GameObject` 대신 `NetworkObject` 전달
-            //                out NetworkObject spawnedObject,
-            //                spawnPosition,
-            //                Quaternion.identity,
-            //                networkRunner.LocalPlayer // 플레이어 소유권 지정 (선택)
-            //            );
-            //if (status == NetworkSpawnStatus.Spawned)
-            //{
-            //    Debug.Log($"`TrySpawn()`을 통해 플레이어 생성 성공! {spawnedObject.name}");
-
-            //}
-            //else
-            //{
-            //    Debug.LogError($"`TrySpawn()` 실패: {status}");
-            //}
-            //spawnedObject.name = CharacterManager.Instance._username;
-            //spawnedObject.transform.Find("name/NameText").GetComponent<TextMeshProUGUI>().text = CharacterManager.Instance._username;
-
-
-            //if (spawnedObject != null)
-            //{
-            //    Debug.Log($"플레이어 스폰 성공! {spawnedObject.name}");
-            //}
-            //else
-            //{
-            //    Debug.LogError("SpawnAsync는 완료되었지만, 생성된 오브젝트가 null입니다.");
-            //}
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"SpawnAsync 도중 예외 발생: {e.Message}");
-        }
-
-
+     
 
     }
 
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        Debug.LogError($"❌ 네트워크가 종료됨: {shutdownReason}");
+        Debug.LogError($"네트워크가 종료됨: {shutdownReason}");
         string sessionName = runner.SessionInfo.Name;
         if (runner.SessionInfo != null)
         {
-            Debug.LogError($"🔹 종료된 세션 이름: {runner.SessionInfo.Name}");
+            Debug.LogError($"종료된 세션 이름: {runner.SessionInfo.Name}");
         }
         else
         {
@@ -374,7 +313,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
                 break;
 
             default:
-                Debug.LogError("⚠ 기타 종료 사유: " + shutdownReason);
+                Debug.LogError("기타 종료 사유: " + shutdownReason);
                 break;
         }
     }
@@ -385,7 +324,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         {
             if (networkRunner.TryGetPlayerObject(player, out var obj) && obj != null)
             {
-                Debug.Log($"✅ [클라이언트] 플레이어 오브젝트 찾음: {obj.name}");
+                Debug.Log($"[클라이언트] 플레이어 오브젝트 찾음: {obj.name}");
                 yield break;
             }
 
@@ -393,7 +332,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             yield return null;
         }
 
-        Debug.LogWarning("⚠ 클라이언트 → 시간 초과: 캐릭터 오브젝트를 찾지 못했습니다.");
+        Debug.LogWarning("클라이언트 → 시간 초과: 캐릭터 오브젝트를 찾지 못했습니다.");
     }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
@@ -417,12 +356,12 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             //var obj = runner.Spawn(playerPrefabRef, spawnPos, Quaternion.identity, player);
             //if (obj != null)
             //{
-            //    Debug.Log($"✅ [서버] {player} 캐릭터 Spawn 완료");
+            //    Debug.Log($"[서버] {player} 캐릭터 Spawn 완료");
             //    obj.name = $"PlayerObject_{player}";
             //}
             //else
             //{
-            //    Debug.LogError($"❌ [서버] {player} Spawn 실패!");
+            //    Debug.LogError($"[서버] {player} Spawn 실패!");
             //}
         }
     }
@@ -461,9 +400,8 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, System.ArraySegment<byte> data) { }
     public void OnSceneLoadDone(NetworkRunner runner)
     {
-        Debug.Log("✅ 씬 로드 완료 → 캐릭터 생성 대기");
         Scene currentScene = SceneManager.GetActiveScene();
-        Debug.Log($"✅ 씬 로드 완료: {currentScene.name} (Index: {currentScene.buildIndex})");
+        Debug.Log($"씬 로드 완료: {currentScene.name} (Index: {currentScene.buildIndex})");
         if (currentScene.name == "GameScene")
         {
             // 이전 씬(LoadingScene)이 남아 있으면 언로드
@@ -471,7 +409,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             if (loadingScene.IsValid() && loadingScene.isLoaded)
             {
                 SceneManager.UnloadSceneAsync(loadingScene);
-                Debug.Log("🧹 LoadingScene 언로드 완료");
+                Debug.Log("LoadingScene 언로드 완료");
             }
 
             StartCoroutine(StratSpawn());

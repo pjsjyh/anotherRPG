@@ -10,12 +10,13 @@ public static class LoginResultData
 {
     public static CharacterManager LocalCharacterData;
 }
+//플레이어 개인 정보 저장되어있는 스크립트
 public class PlayerControll : NetworkBehaviour
 {
     [SerializeField] private Player playerLogic;
-    public CharacterManager myData;
+    public CharacterManager myData; //개인데이터
     public PlayerRef myPlayerRef;
-   
+    
     public void Awake()
     {
             myData = new CharacterManager();
@@ -27,10 +28,11 @@ public class PlayerControll : NetworkBehaviour
             playerLogic.CustomUpdate();
         }
     }
-    public override void Spawned()
+    public override async void Spawned() //캐릭터 생성 후 정보 이어주기
     {
         Debug.Log("▶ Spawned: " + Object.InputAuthority);
-        PlayerManager.Instance.RegisterPlayer(Object.InputAuthority, Object);
+        await PlayerManager.Instance.RegisterPlayer(Object.InputAuthority, Object);
+
         myPlayerRef = Object.InputAuthority;
         if (Object.HasInputAuthority)
         {
@@ -47,19 +49,29 @@ public class PlayerControll : NetworkBehaviour
         }
         GameManager.Instance.PlayerDataReady();
     }
-    private void InitMyCharacter()
+    private void InitMyCharacter() //내 캐릭터 init하기
     {
         myData.playerObj = gameObject;
-       StartCoroutine(SettingDataStart());
+        StartCoroutine(SettingDataStart());
         RPC_SetName(myData._username);
     }
 
-    private void InitOtherCharacter()
+    private void InitOtherCharacter() //다른 캐릭터 init하기
     {
         var nameUI = transform.Find("name/NameText");
         if (nameUI != null)
         {
             nameUI.GetComponent<TextMeshProUGUI>().text = this.name;
+        }
+        if (Runner.IsServer && ServerPlayerDataStore.AllPlayerData.TryGetValue(Object.InputAuthority, out var data))
+        {
+            RPC_SetCharacterData(
+                data.myCharacter._hp.Value, data.myCharacter._mp.Value, data.myCharacter._money.Value, data.myCharacter._level.Value,
+                data.myCharacterOther._attack.Value, data.myCharacterOther._defense.Value, data.myCharacterOther._critical.Value,
+                data.myCharacterOther._speed.Value, data.myCharacterOther._luck.Value, data.myCharacterOther._gem.Value,
+                data._username
+            );
+            Debug.Log(data._username);
         }
     }
     public void OnObjectSpawned(NetworkRunner runner, NetworkObject obj)
@@ -74,6 +86,8 @@ public class PlayerControll : NetworkBehaviour
     {
 
         var data = LoginResultData.LocalCharacterData;
+        ServerPlayerDataStore.AllPlayerData[myPlayerRef] = LoginResultData.LocalCharacterData;
+
         if (myData != null && data != null)
         {
             var mouseMove = Camera.main.transform.parent.GetComponent<MouseMove>();
@@ -90,7 +104,6 @@ public class PlayerControll : NetworkBehaviour
                 nameUI.GetComponent<TextMeshProUGUI>().text = data._username;
         }
         myData = data;
-        Debug.Log("돌아가 데이터 세팅 완료");
         yield return null;
     }
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
@@ -101,5 +114,39 @@ public class PlayerControll : NetworkBehaviour
         var nameUI = transform.Find("name/NameText");
         if (nameUI != null)
             nameUI.GetComponent<TextMeshProUGUI>().text = playerName;
+    }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_SetCharacterData(
+    int hp, int mp, int money, int level,
+    int atk, int def, int cri, int spd, int luck, int gem,
+    string username)
+    {
+        Debug.Log($"[RPC] 다른 플레이어 캐릭터 세팅됨: {username}");
+        if (!Object.HasInputAuthority)
+        {
+            myData = new CharacterManager();
+            myData.myCharacter._hp.Value = hp;
+            myData.myCharacter._mp.Value = mp;
+            myData.myCharacter._money.Value = money;
+            myData.myCharacter._level.Value = level;
+
+            myData.myCharacterOther._attack.Value = atk;
+            myData.myCharacterOther._defense.Value = def;
+            myData.myCharacterOther._critical.Value = cri;
+            myData.myCharacterOther._speed.Value = spd;
+            myData.myCharacterOther._luck.Value = luck;
+            myData.myCharacterOther._gem.Value = gem;
+
+            myData._username = username;
+            this.name = username;
+
+            var nameUI = transform.Find("name/NameText");
+            if (nameUI != null)
+                nameUI.GetComponent<TextMeshProUGUI>().text = username;
+        }
+    }
+    public void StartMoveToTargetNav(Vector3 getTarget)
+    {
+        playerLogic.GoTarget(getTarget);
     }
 }

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using StoryMain;
 
 public enum npcState { idle, mainquest, domainquest, subquest, mainquestFinish, subquestFinish, gameFinish};
 [System.Serializable]
@@ -31,7 +30,7 @@ public class InteractPlayer : MonoBehaviour
     public string npcCharaterID;
     public GameObject mainButton;
     public bool isInteractOK = true;
-
+    [SerializeField]
     private npcState _thisState = npcState.idle;
     public npcState ThisState
     {
@@ -41,6 +40,7 @@ public class InteractPlayer : MonoBehaviour
             if (_thisState != value)
             {
                 _thisState = value;
+                Debug.Log("값 바뀜 "+value);
                 OnStateChanged(_thisState); // 상태가 바뀔 때 실행될 메서드
             }
         }

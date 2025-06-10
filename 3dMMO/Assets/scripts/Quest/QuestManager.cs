@@ -5,6 +5,7 @@ using Questsetting;
 using System.Linq;
 using CharacterInfo;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 //퀘스트 관리. 현재 내 퀘스트들의 상태.
 [System.Serializable]
 public class Questver
@@ -13,17 +14,32 @@ public class Questver
     public string name;
     public string description;
     public bool isMainQuest;
+    public string type;
     public QuestType quest_type;
+
+    [JsonProperty("targetId")]
+    public List<string> target_id;
+    public List<Vector3> target_pos = new List<Vector3>();
+
     public string reward;
     public List<QuestGoal> goals = new();
     public bool isCompleted;
+    public string next_quest_id;
 
     public bool CheckCompleted()
     {
         foreach (var goal in goals)
         {
             if (!goal.IsCompleted)
-                return false;
+            {
+                if (goal.requiredAmount == goal.currentAmount)
+                {
+                    isCompleted = true;
+                    return true;
+                }
+            }
+            return false;
+
         }
 
         isCompleted = true;
@@ -49,25 +65,26 @@ public class QuestManager : MonoBehaviour
             Destroy(gameObject);
         
     }
+    //새 퀘스트 추가
     public async void AddQuest()
     {
         if (!activeQuests.Any(q => q.questId == nowquest.quest_id))
         {
             var newQuest = ConvertToProgressQuest(nowquest);
+            Debug.Log(newQuest.isCompleted + " " + newQuest.target_id[0]+"  "+newQuest.next_quest_id);
+
+            newQuest.target_pos.Add(NPCManager.Instance.GetNPCpos(newQuest.target_id[0]));
             activeQuests.Add(newQuest);
             Debug.Log($"[퀘스트 추가] {newQuest.name}");
-
+            if (newQuest.isMainQuest)
+            {
+                Debug.Log(newQuest.target_id);
+                //NPCManager.Instance.SetNPCState(newQuest.target_id, npcState.mainquest);
+            }
             await QuesetServer.Instance.SendQuestToServer(newQuest); //서버에도 저장
         }
     }
-    public void LoadFromServer(List<Questver> serverQuests)
-    {
-        activeQuests.Clear();
-        foreach (var quest in serverQuests)
-        {
-            //AddQuest(quest);
-        }
-    }
+    //퀘스트 완료시 호출
     public async void CompleteQuest(string questId)
     {
         Questver quest = activeQuests.Find(q => q.questId == questId);
@@ -76,8 +93,11 @@ public class QuestManager : MonoBehaviour
             quest.isCompleted = true;
             completedQuests.Add(quest);
             activeQuests.Remove(quest);
+            CharacterManager playerManager = PlayerManager.Instance.GetMyCharacterData();
+            playerManager.GetMoneyReward(int.Parse(quest.reward));
         }
-        await TryGetNextMainQuest(nowquest.next_quest_id);
+        Debug.Log(quest.next_quest_id);
+        await TryGetNextMainQuest(quest.next_quest_id);
         QuestUISetting.Instance.MakeQuestUI();
     }
     public Questver ConvertToProgressQuest(Quest nowquest)
@@ -90,8 +110,11 @@ public class QuestManager : MonoBehaviour
             reward = nowquest.reward,
             isMainQuest = nowquest.type.ToLower() == "main",
             quest_type = nowquest.quest_type,
+            type = nowquest.type,
+            target_id = nowquest.target_id,
             isCompleted = false,
-            goals = new List<QuestGoal>()
+            goals = new List<QuestGoal>(),
+            next_quest_id = nowquest.next_quest_id
         };
         foreach (var target in nowquest.target_id)
         {
@@ -109,14 +132,14 @@ public class QuestManager : MonoBehaviour
     private async Task TryGetNextMainQuest(string completedQuestId)
     {
         // 서버에서 다음 메인 퀘스트 받아오기
-        var nextQuest = await QuesetServer.Instance.GetNextMainQuest();
-
+        var nextQuest = await QuesetServer.Instance.GetNextMainQuest(completedQuestId);
+        Debug.Log(nextQuest);
         if (nextQuest != null)
         {
            if (nextQuest.quest_id == completedQuestId)
             {
                 nowquest = nextQuest;
-                if(nowquest.quest_type== QuestType.Kill)
+                if (nowquest.quest_type == QuestType.Kill)
                 {
 
                 }
@@ -133,10 +156,23 @@ public class QuestManager : MonoBehaviour
         }
     }
     ///
+   
+    public void QuestClearBtnClick()
+    {
+        Debug.Log(activeQuests.Count);
+        foreach (var quest in activeQuests.ToList())
+        {
+            if (quest.isCompleted)
+            {
+                //QuestUISetting.Instance.OnQuestClearBtn();
+
+                CompleteQuest(quest.questId);
+            }
+        }
+
+    }
     public void OnTalkedTo(string npcId)
     {
-        List<Questver> completed = new();
-
         foreach (var quest in activeQuests)
         {
             foreach (var goal in quest.goals)
@@ -144,28 +180,17 @@ public class QuestManager : MonoBehaviour
                 if (goal.goalType == QuestType.Talk && goal.targetId == npcId)
                 {
                     goal.currentAmount = goal.requiredAmount;
+                    quest.isCompleted = true;
                 }
             }
-
             if (quest.CheckCompleted())
             {
-                completed.Add(quest); // 리스트만 모아둠
+                //completed.Add(quest); // 리스트만 모아둠
             }
         }
-        foreach (var quest in completed)
-        {
-            CompleteQuest(quest.questId);
-            if (quest.isMainQuest)
-            {
-                CharacterManager myPlayer = PlayerManager.Instance.GetMyCharacterData();
-                myPlayer.characterPersonalinfo.storyNum += 0.1f;
-                NPCManager.Instance.SetNPCState(npcId, npcState.mainquest);
-            }
-            Debug.Log($"퀘스트 완료됨: {quest.name}");
-        }
-    }
 
-    public async void OnMonsterKilled(string monsterId)
+    }
+    public void OnMonsterKilled(string monsterId)
     {
         foreach (var quest in activeQuests)
         {
@@ -174,13 +199,14 @@ public class QuestManager : MonoBehaviour
                 if (goal.goalType == QuestType.Kill && goal.targetId == monsterId)
                 {
                     goal.currentAmount++;
+                    if (goal.currentAmount == goal.requiredAmount) quest.isCompleted = true;
                 }
             }
-
-            if (CheckGoalsCompletedOnly(quest.goals))
+            if (quest.isCompleted)
             {
-                await TryGetNextMainQuest(nowquest.next_quest_id);
-                Debug.Log($"퀘스트 목표 달성 완료! → NPC에게 보고 필요: {quest.name}");
+                CharacterManager chi = PlayerManager.Instance.GetMyCharacterData();
+                NPCManager.Instance.SetNPCState(chi.characterPersonalinfo.nextstory_npc_id, npcState.mainquest);
+
             }
         }
     }

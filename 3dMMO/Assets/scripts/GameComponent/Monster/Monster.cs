@@ -134,7 +134,7 @@ public abstract class Monster : MonoBehaviour
                 monsterAnim.ResetTrigger("isFollow");
                 MonsterDead();
                 var myPlayer = PlayerManager.Instance.GetMyCharacterData();
-                myPlayer.myCharacter._money += reward;
+                myPlayer.myCharacter._money.Value += reward;
             }
             else
             {

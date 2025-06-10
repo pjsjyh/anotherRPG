@@ -33,37 +33,37 @@ public class QuestGoal
 }
 public class Quests : MonoBehaviour
 {
-    public Quest baseInfo;        // 퀘스트 정보 
-    public QuestGet progressInfo; // 진행 정보
+    //public Quest baseInfo;        // 퀘스트 정보 
+    //public QuestGet progressInfo; // 진행 정보
 
-    public bool IsCompleted => progressInfo.is_finish;
+    //public bool IsCompleted => progressInfo.is_finish;
 
-    public void OnMonsterKilled(string monsterId)
-    {
-        if (baseInfo.quest_type != QuestType.Kill) return;
-        if (!progressInfo.progress.Contains(monsterId))
-            progressInfo.progress.Add(monsterId);
+    //public void OnMonsterKilled(string monsterId)
+    //{
+    //    if (baseInfo.quest_type != QuestType.Kill) return;
+    //    if (!progressInfo.progress.Contains(monsterId))
+    //        progressInfo.progress.Add(monsterId);
 
-        // 예시로 몬스터 3마리 잡는 퀘스트라면:
-        if (progressInfo.progress.Count >= 3)
-        {
-            progressInfo.is_finish = true;
-        }
-    }
+    //    // 예시로 몬스터 3마리 잡는 퀘스트라면:
+    //    if (progressInfo.progress.Count >= 3)
+    //    {
+    //        progressInfo.is_finish = true;
+    //    }
+    //}
 
-    public void OnTalkedToNPC(string npcId)
-    {
-        if (baseInfo.quest_type != QuestType.Talk) return;
+    //public void OnTalkedToNPC(string npcId)
+    //{
+    //    if (baseInfo.quest_type != QuestType.Talk) return;
 
-        if (baseInfo.target_id.Contains(npcId) &&
-            !progressInfo.progress.Contains(npcId))
-        {
-            progressInfo.progress.Add(npcId);
-        }
+    //    if (baseInfo.target_id.Contains(npcId) &&
+    //        !progressInfo.progress.Contains(npcId))
+    //    {
+    //        progressInfo.progress.Add(npcId);
+    //    }
 
-        if (baseInfo.target_id.TrueForAll(id => progressInfo.progress.Contains(id)))
-        {
-            progressInfo.is_finish = true;
-        }
-    }
+    //    if (baseInfo.target_id.TrueForAll(id => progressInfo.progress.Contains(id)))
+    //    {
+    //        progressInfo.is_finish = true;
+    //    }
+    //}
 }

@@ -2,6 +2,11 @@
 using CharacterInfo;
 using Fusion;
 using UnityEngine;
+using System.Threading.Tasks;
+public static class ServerPlayerDataStore
+{
+    public static Dictionary<PlayerRef, CharacterManager> AllPlayerData = new();
+}
 
 public class PlayerManager : MonoBehaviour
 {
@@ -26,13 +31,13 @@ public class PlayerManager : MonoBehaviour
         Runner = runner;
     }
 
-    public void RegisterPlayer(PlayerRef playerRef, NetworkObject netObj)
+    public async Task RegisterPlayer(PlayerRef playerRef, NetworkObject netObj)
     {
         if (!playerObjects.ContainsKey(playerRef))
         {
             Debug.Log("RegisterPlayer: " + playerRef);
             playerObjects[playerRef] = netObj;
-
+            await Task.Yield();
         }
     }
     public CharacterManager GetCharacterData(PlayerRef player)
@@ -48,7 +53,7 @@ public class PlayerManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("❌ 해당 플레이어 오브젝트 없음: " + player);
+            Debug.LogWarning("해당 플레이어 오브젝트 없음: " + player);
         }
 
         return null;
@@ -75,7 +80,7 @@ public class PlayerManager : MonoBehaviour
 
         if (Runner == null)
         {
-            Debug.LogWarning("❌ Runner가 아직 설정되지 않았습니다.");
+            Debug.LogWarning("Runner가 아직 설정되지 않았습니다.");
             return null;
         }
 

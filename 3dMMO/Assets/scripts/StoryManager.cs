@@ -39,6 +39,7 @@ public class StoryManager : MonoBehaviour
     [System.Serializable]
     public class Scene
     {
+        public string nextNPCID;
         public string sceneName;
         public List<Dialogue> dialogues;
         public string quest;
@@ -92,7 +93,7 @@ public class StoryManager : MonoBehaviour
 
     public IEnumerator StoryJSONtoRead(string filename, string sceneName)
     {
-        string path = Path.Combine(Application.dataPath, "scripts", "Story", "MainStory/MS_1" + ".json");
+        string path = Path.Combine(Application.streamingAssetsPath, "MS_1.json");
 
         // 파일의 텍스트를 string으로 저장
         string jsonData = File.ReadAllText(path);
@@ -106,9 +107,9 @@ public class StoryManager : MonoBehaviour
             {
                 questid = scene.quest;
                 var myPlayer = PlayerManager.Instance.GetMyCharacterData();
-                myPlayer.SettingMainStory(filename, scene.nextNode);
+                myPlayer.SettingMainStory(filename, scene.nextNode, scene.nextNPCID);
 
-                Debug.Log("Scene Name: " + scene.sceneName);  // 씬 이름 출력
+                Debug.Log("Scene Name: " + scene.sceneName+" "+ scene.nextNode);  // 씬 이름 출력
                 RunCoroutineAsTask(SettingNPC(scene));
                 if (scene.npcMovements != null)
                 {
@@ -125,13 +126,17 @@ public class StoryManager : MonoBehaviour
 
         }
         chatUI.SetActive(false);
-
-        if (questid != "")
+        if (questid == "clear")
+        {
+            //QuestManager.Instance.QuestClearBtnClick();
+            QuestUISetting.Instance.OnQuestClearBtn();
+        }
+        else if (questid != "")
         {
             QuestUISetting.Instance.GetQuestByID(questid, true);
-
         }
-       
+        
+
     }
     public IEnumerator ShowDialogueCoroutine(string name, string description)
     {
@@ -199,7 +204,7 @@ public class StoryManager : MonoBehaviour
 
             if (npc == null)
             {
-                Debug.LogError($"❌ NPC {movement.npcID}를 찾을 수 없음!");
+                Debug.LogError($"NPC {movement.npcID}를 찾을 수 없음!");
                 continue;
             }
             if (movement != null)
@@ -244,7 +249,7 @@ public class StoryManager : MonoBehaviour
 
             if (npc == null)
             {
-                Debug.LogError($"❌ NPC {movement.npcID}를 찾을 수 없음!");
+                Debug.LogError($"NPC {movement.npcID}를 찾을 수 없음!");
                 continue;
             }
             if(movement!=null)

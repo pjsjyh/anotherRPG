@@ -9,7 +9,7 @@ public class AddQuestUI : MonoBehaviour
     public GameObject QuestPrefab;
     private TextMeshProUGUI prefab_title;
     private TextMeshProUGUI prefab_des;
-
+   
     public void makeQuestUI()
     {
         foreach(Transform child in this.transform)
@@ -23,10 +23,13 @@ public class AddQuestUI : MonoBehaviour
             prefab_des = questUI.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
             prefab_title.text = q.name;
             prefab_des.text = q.description;
+            QuestButton qb = questUI.GetComponent<QuestButton>();
+            qb.target_pos = q.target_pos[0];
             if (q.quest_type == QuestType.Kill)
             {
 
             }
         }
     }
+    
 }

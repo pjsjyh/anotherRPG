@@ -6,38 +6,26 @@ using UnityEngine.SceneManagement;
 
 public class Loading : MonoBehaviour
 {
+    //로딩 시작.
     public GameObject networkManagerPrefab;
-    // Start is called before the first frame update
+    
     void Start()
     {
         Debug.Log("thisis loading");
         StartCoroutine(LoadMainSceneAsync());
     }
-
+    //로그인 후 데이터 가져와 플레이어 셋팅
+    // 네트워크 셋팅
     IEnumerator LoadMainSceneAsync()
     {
-        GameManager.Instance.InitializeGameManagers();
-        //yield return StartCoroutine(SettingNetwork());
+        var initTask = GameManager.Instance.InitializeGameManagers();
+        yield return new WaitUntil(() => initTask.IsCompleted);
+        var task = NetworkManager.instance.StartNetworkFunc();
+        yield return new WaitUntil(() => task.IsCompleted);
         yield return new WaitForSeconds(3.0f);
        // SceneManager.LoadScene("GameScene");
         yield return new WaitForSeconds(0.5f);
-        Debug.Log($"🔹 NetworkManager 존재 여부: {FindObjectOfType<NetworkManager>() != null}");
+        Debug.Log($"NetworkManager 존재 여부: {FindObjectOfType<NetworkManager>() != null}");
     }
 
-    IEnumerator SettingNetwork()
-    {
-        if (FindObjectOfType<NetworkManager>() != null)
-        {
-            Debug.Log("✅ 이미 NetworkManager가 존재함, 새로 생성하지 않음.");
-            yield break;
-        }
-        GameObject networkManagerObj = Instantiate(networkManagerPrefab);
-        Debug.Log("🔹 NetworkManager 생성 중...");
-        DontDestroyOnLoad(networkManagerObj);
-        Debug.Log("✅ DontDestroyOnLoad 적용 완료!");
-        NetworkManager networkManager = networkManagerObj.GetComponent<NetworkManager>();
-        Task startNetworkTask = networkManager.StartNetwork();
-        yield return new WaitUntil(() => startNetworkTask.IsCompleted); // Task 완료될 때까지 대기
-
-    }
 }

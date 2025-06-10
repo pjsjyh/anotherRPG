@@ -21,8 +21,12 @@ public class QuestUISetting : MonoBehaviour
     public GameObject questParnet;
     private QuesetServer qs;
 
+    public GameObject popupQuestClear;
+    public TextMeshProUGUI questClearTitle;
+    public TextMeshProUGUI questClearReward;
+    public Button questClearOKBtn;
+
     private string nowOpenQuestID;
-    private string jsonFilePath = "Assets/scripts/Quest/QuestInfo.json";
     private string[] npclist;
     private void Awake()
     {
@@ -52,6 +56,8 @@ public class QuestUISetting : MonoBehaviour
         questTitle.text = q.name;
         questDescription.text = q.description;
         questReward.text = q.reward;
+        questClearTitle.text = q.name;
+        questClearReward.text = q.reward;
     }
 
     public void ClickQuest()
@@ -61,6 +67,21 @@ public class QuestUISetting : MonoBehaviour
         popupQuest.SetActive(false);
         MakeQuestUI();
         //CharacterManager.Instance.AddQuest(questTitle, questType, requiredAmount);
+
+    }
+   public void OnQuestClearBtn()
+    {
+        popupQuestClear.SetActive(true);
+    }
+    public void ClickQuesteClearAccept()
+    {
+        QuestManager.Instance.QuestClearBtnClick();
+        popupQuestClear.SetActive(false);
+        CharacterManager playerManager = PlayerManager.Instance.GetMyCharacterData();
+        Debug.Log(playerManager.characterPersonalinfo.nextstory_name);
+        if(playerManager.characterPersonalinfo.nextstory_npc_id!=null)
+            NPCManager.Instance.SetNPCState(playerManager.characterPersonalinfo.nextstory_npc_id, npcState.mainquest);
+        playerManager.characterPersonalinfo.nextstory_npc_id = null;
 
     }
     public void MakeQuestUI()

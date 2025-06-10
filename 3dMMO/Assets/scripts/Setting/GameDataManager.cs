@@ -22,7 +22,15 @@ public class CharacterData
     public List<object> position;
     public List<object> rotation;
 }
-
+public class RawChaInfoOther
+{
+    public int _attack;
+    public int _defense;
+    public int _critical;
+    public int _speed;
+    public int _luck;
+    public int _gem;
+}
 public class GameDataManager : MonoBehaviour
 {
     private static GameDataManager instance;
@@ -76,69 +84,29 @@ public class GameDataManager : MonoBehaviour
     private void SaveGameData()
     {
         // 로컬 파일 저장 (필요 시 확장 가능)
-        Debug.Log("✅ 게임 데이터가 성공적으로 저장되었습니다.");
+        Debug.Log("게임 데이터가 성공적으로 저장되었습니다.");
     }
-    public float[] GetFloatArray(object obj)
-    {
-        Debug.Log(obj);
-        //  이미 float[]이면 그대로 반환
-        if (obj is float[])
-            return (float[])obj;
-
-        // object[] 배열로 변환 가능하면 float[]으로 변환
-        if (obj is object[] objArray)
-        {
-            try
-            {
-                return Array.ConvertAll(objArray, x => Convert.ToSingle(x));
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"❌ 변환 실패 (object[]): {e.Message}");
-            }
-        }
-
-        // List<object> 형태라면 float[] 변환 시도
-        if (obj is List<object> list)
-        {
-            try
-            {
-                return list.ConvertAll(x => Convert.ToSingle(x)).ToArray();
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"❌ 변환 실패 (List<object>): {e.Message}");
-            }
-        }
-
-        // JSON에서 오는 경우 string일 가능성이 있음
-        if (obj is string jsonString)
-        {
-            try
-            {
-                return JsonUtility.FromJson<float[]>(jsonString);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"❌ 변환 실패 (string JSON): {e.Message}");
-            }
-        }
-
-        Debug.LogError("❌ 변환 실패: 올바른 배열 형식이 아님!");
-        return new float[] { 0, 0, 0 };
-    }
-
+   
     private void SortData()
     {
         var myPlayer = PlayerManager.Instance.GetMyCharacterData();
         //myPlayer.playerObj.GetComponent<Player>().SavePositionRotation();
         chaData.character_id = myPlayer.characterPersonalinfo.charater_id;
-        chaData.hp = myPlayer.myCharacter._hp;
-        chaData.mp = myPlayer.myCharacter._mp;
-        chaData.money = myPlayer.myCharacter._money;
-        chaData.level = myPlayer.myCharacter._level;
+        chaData.hp = myPlayer.myCharacter._hp.Value;
+        chaData.mp = myPlayer.myCharacter._mp.Value;
+        chaData.money = myPlayer.myCharacter._money.Value;
+        chaData.level = myPlayer.myCharacter._level.Value;
         chaData.storynum = myPlayer.characterPersonalinfo.storyNum;
-        chaData.attributes = JsonConvert.SerializeObject(myPlayer.myCharacterOther);
+        var raw = new RawChaInfoOther
+        {
+            _attack = myPlayer.myCharacterOther._attack.Value,
+            _defense = myPlayer.myCharacterOther._defense.Value,
+            _critical = myPlayer.myCharacterOther._critical.Value,
+            _speed = myPlayer.myCharacterOther._speed.Value,
+            _luck = myPlayer.myCharacterOther._luck.Value,
+            _gem = myPlayer.myCharacterOther._gem.Value
+        };
+        chaData.attributes = JsonConvert.SerializeObject(raw);
         float[] pos = myPlayer.characterPersonalinfo.chaPosition;
         float[] rot = myPlayer.characterPersonalinfo.chaRotation;
         chaData.position = new List<object> { pos[0], pos[1], pos[2] };

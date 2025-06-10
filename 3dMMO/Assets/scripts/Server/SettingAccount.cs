@@ -6,15 +6,29 @@ using CharacterInfo;
 using System.Linq;
 using Questsetting;
 using Newtonsoft.Json.Linq;
+using UniRx;
+using System;
 
 namespace SettingAccountManager
 {
     //게임 로그인시 계정 셋팅.
     //http통신을 이용한 캐릭터 정보 셋팅.
+    public class RawChaInfoOther
+    {
+        public int _attack;
+        public int _defense;
+        public int _critical;
+        public int _speed;
+        public int _luck;
+        public int _gem;
+    }
     public class SettingAccount
     {
+        //처음 캐릭터 데이터가 들어왔을 때 데이터 가져와서 셋팅.
         public static async Task DoSettingAccount(string responseBody)
         {
+            await Task.Yield();
+
             var jsonResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseBody);
 
             var playerInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse["playerinfo"].ToString());
@@ -25,19 +39,39 @@ namespace SettingAccountManager
 
 
             ChaInfoOther characterData;
+
             if (string.IsNullOrWhiteSpace(attributesJson))
             {
-                characterData = new ChaInfoOther { _attack = 1, _defense = 1, _critical = 1, _speed = 1, _luck = 1 };
+                // 기본값
+                characterData = new ChaInfoOther
+                {
+                    _attack = new ReactiveProperty<int>(1),
+                    _defense = new ReactiveProperty<int>(1),
+                    _critical = new ReactiveProperty<int>(1),
+                    _speed = new ReactiveProperty<int>(1),
+                    _luck = new ReactiveProperty<int>(1),
+                    _gem = new ReactiveProperty<int>(0)
+                };
             }
             else
             {
-                //JSON이 이중으로 감싸져 있는 경우 해결
                 if (attributesJson.StartsWith("\"") && attributesJson.EndsWith("\""))
                 {
                     attributesJson = JsonConvert.DeserializeObject<string>(attributesJson);
                 }
 
-                characterData = JsonConvert.DeserializeObject<ChaInfoOther>(attributesJson);
+                // RawChaInfoOther로 먼저 역직렬화
+                var raw = JsonConvert.DeserializeObject<RawChaInfoOther>(attributesJson);
+
+                characterData = new ChaInfoOther
+                {
+                    _attack = new ReactiveProperty<int>(raw._attack),
+                    _defense = new ReactiveProperty<int>(raw._defense),
+                    _critical = new ReactiveProperty<int>(raw._critical),
+                    _speed = new ReactiveProperty<int>(raw._speed),
+                    _luck = new ReactiveProperty<int>(raw._luck),
+                    _gem = new ReactiveProperty<int>(raw._gem)
+                };
             }
 
             var loginData = new CharacterManager();
@@ -82,18 +116,18 @@ namespace SettingAccountManager
                 currentstory_name = playerCurrentStory,
                 nextstory_name = playerNextStory
             };
-
-            // ✅ 나머지 기본 정보
+            // 나머지 기본 정보
             loginData._username = playerName;
             loginData.myCharacterOther = characterData; // 필요에 따라 채워넣기
-            loginData.myCharacter._hp = playerHP;
-            loginData.myCharacter._mp = playerMp;
-            loginData.myCharacter._level = playerLevel;
-            loginData.myCharacter._money = playerMoney;
+            loginData.myCharacter._hp.Value = playerHP;
+            loginData.myCharacter._mp.Value = playerMp;
+            loginData.myCharacter._level.Value = playerLevel;
+            loginData.myCharacter._money.Value = playerMoney;
 
-            // ✅ 전역 저장
+            // 전역 저장
             LoginResultData.LocalCharacterData = loginData;
-
+            Debug.Log("셋팅 끝");
+            await Task.Yield();
             await Task.CompletedTask;
         }
     }

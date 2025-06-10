@@ -4,6 +4,7 @@ using UnityEngine;
 using SettingAccountManager;
 using CharacterInfo;
 using System;
+using System.Threading.Tasks;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -27,10 +28,18 @@ public class GameManager : MonoBehaviour
     {
         characterData = data;
     }
-    public async void InitializeGameManagers()
+    public async Task InitializeGameManagers()
     {
-        Debug.Log("✅ GameManager 초기화 중...");
-        await SettingAccount.DoSettingAccount(characterData);
+        Debug.Log("GameManager 초기화 중...");
+        try
+        {
+            await SettingAccount.DoSettingAccount(characterData);
+            Debug.Log("매니저 셋팅 완료");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("SettingAccount에서 예외 발생: " + e.Message);
+        }
         // 다른 매니저들 초기화 (예: QuestUISetting, StoryManager 등)
     }
     public void PlayerDataReady()

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using CharacterInfo;
+using UniRx;
 public class MyInfoSetting : MonoBehaviour
 {
     [SerializeField]
@@ -13,7 +14,7 @@ public class MyInfoSetting : MonoBehaviour
     [SerializeField]
 
     private TextMeshProUGUI levelText;
-
+    private CompositeDisposable disposables = new CompositeDisposable();
     private enum Stats
     {
         Attack,
@@ -26,20 +27,26 @@ public class MyInfoSetting : MonoBehaviour
         Gold,
         Gem
     }
-    public void openPanel()
+    private void OnEnable()
     {
         var myPlayer = PlayerManager.Instance.GetMyCharacterData();
-        statsTexts[0].text = myPlayer.myCharacterOther._attack.ToString();
-        statsTexts[1].text = myPlayer.myCharacterOther._defense.ToString();
-        statsTexts[2].text = myPlayer.myCharacter._hp.ToString();
-        statsTexts[3].text = myPlayer.myCharacter._mp.ToString();
-        statsTexts[4].text = myPlayer.myCharacterOther._critical.ToString();
-        statsTexts[5].text = myPlayer.myCharacterOther._speed.ToString();
-        statsTexts[6].text = myPlayer.myCharacterOther._luck.ToString();
-        statsTexts[7].text = myPlayer.myCharacter._money.ToString();
-        statsTexts[8].text = myPlayer.myCharacterOther._gem.ToString();
-        nameText.text = myPlayer._username;
-        levelText.text = "Lv."+ myPlayer.myCharacter._level.ToString();
-    }
 
+        // 기본 능력치 바인딩
+        myPlayer.myCharacterOther._attack.Subscribe(value => statsTexts[0].text = value.ToString()).AddTo(disposables);
+        myPlayer.myCharacterOther._defense.Subscribe(value => statsTexts[1].text = value.ToString()).AddTo(disposables);
+        myPlayer.myCharacter._hp.Subscribe(value => statsTexts[2].text = value.ToString()).AddTo(disposables);
+        myPlayer.myCharacter._mp.Subscribe(value => statsTexts[3].text = value.ToString()).AddTo(disposables);
+        myPlayer.myCharacterOther._critical.Subscribe(value => statsTexts[4].text = value.ToString()).AddTo(disposables);
+        myPlayer.myCharacterOther._speed.Subscribe(value => statsTexts[5].text = value.ToString()).AddTo(disposables);
+        myPlayer.myCharacterOther._luck.Subscribe(value => statsTexts[6].text = value.ToString()).AddTo(disposables);
+        myPlayer.myCharacter._money.Subscribe(value => statsTexts[7].text = value.ToString()).AddTo(disposables);
+        myPlayer.myCharacterOther._gem.Subscribe(value => statsTexts[8].text = value.ToString()).AddTo(disposables);
+
+        nameText.text = myPlayer._username;
+        myPlayer.myCharacter._level.Subscribe(value => levelText.text = "Lv." + value.ToString()).AddTo(disposables);
+    }
+    private void OnDisable()
+    {
+        disposables.Clear(); // 바인딩 해제
+    }
 }

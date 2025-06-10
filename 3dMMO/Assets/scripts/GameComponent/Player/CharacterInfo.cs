@@ -1,25 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UniRx;
 namespace CharacterInfo
 {
     public class ChaInfo
     {
-        public int _hp;
-        public int _mp;
-        public int _money;
-        public int _level;
+        public ReactiveProperty<int> _hp = new(100);
+        public ReactiveProperty<int> _mp = new(50);
+        public ReactiveProperty<int> _money = new(1000);
+        public ReactiveProperty<int> _level = new(1);
+    }
 
-    };
     public class ChaInfoOther
     {
-        public int _attack;
-        public int _defense;
-        public int _critical;
-        public int _speed;
-        public int _luck;
-        public int _gem;
+        public ReactiveProperty<int> _attack = new(10);
+        public ReactiveProperty<int> _defense = new(5);
+        public ReactiveProperty<int> _critical = new(1);
+        public ReactiveProperty<int> _speed = new(3);
+        public ReactiveProperty<int> _luck = new(2);
+        public ReactiveProperty<int> _gem = new(0);
     }
 
     public class CharacterPersonalInfo
@@ -27,6 +27,7 @@ namespace CharacterInfo
         public string charater_id;
         public string nextstory_name = null;
         public string currentstory_name = null;
+        public string nextstory_npc_id = null;
         public float storyNum;
         public float[] chaPosition;
         public float[] chaRotation;
@@ -72,12 +73,12 @@ namespace CharacterInfo
         {
             ChaInfoOther managerInfo = new ChaInfoOther
             {
-                _attack = 9999,
-                _defense = 9999,
-                _critical = 9999,
-                _speed = 100,
-                _luck = 9999,
-                _gem = 0
+                _attack = new ReactiveProperty<int>(9999),
+                _defense = new ReactiveProperty<int>(9999),
+                _critical = new ReactiveProperty<int>(9999),
+                _speed = new ReactiveProperty<int>(100),
+                _luck = new ReactiveProperty<int>(9999),
+                _gem = new ReactiveProperty<int>(0)
             };
 
             InitializePlayer(managerInfo, "manager", 100, 100, 999999, 999, new float[] { 0, 0, 0 }, new float[] { 0, 0, 0 }, "MainFirst", "MainSecond");
@@ -86,10 +87,10 @@ namespace CharacterInfo
        
         public void InitializePlayer(ChaInfoOther playerInfo, string username, int hp, int mp, int money, int level, float[] position, float[] rotation, string currentStory, string nextStory)
         {
-            myCharacter._hp = hp;
-            myCharacter._mp = mp;
-            myCharacter._money = money;
-            myCharacter._level = level;
+            myCharacter._hp.Value = hp;
+            myCharacter._mp.Value = mp;
+            myCharacter._money.Value = money;
+            myCharacter._level.Value = level;
             myCharacterOther = playerInfo;
             _username = username;
             characterPersonalinfo.chaPosition = position;
@@ -115,10 +116,17 @@ namespace CharacterInfo
                 _username = loadedData._username;
             }
         }
-        public void SettingMainStory(string currentStory, string nextStory)
+        public void SettingMainStory(string currentStory, string nextStory, string nextnpcid)
         {
             characterPersonalinfo.currentstory_name = currentStory;
             characterPersonalinfo.nextstory_name = nextStory;
+            characterPersonalinfo.nextstory_npc_id = nextnpcid;
+        }
+
+
+        public void GetMoneyReward(int reward)
+        {
+            myCharacter._money.Value += reward;
         }
     }
 

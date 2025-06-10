@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using CharacterInfo;
 using TMPro;
+using UnityEngine.AI;
 
 public class Player : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Weapon weapon;
     [SerializeField] private playerSkill playerskilltimer;
     [SerializeField] private GameObject trailTip;
+    [SerializeField] private NavMeshAgent navAgent;
 
     private Vector3 moveVec;
     public int attacknum = -1;
@@ -28,6 +30,9 @@ public class Player : MonoBehaviour
     public bool isJump = false;
     private bool isDead = false;
     private bool skillclickEvent = false;
+    private bool isMoveNavAuto = false;
+    public float stopDistance = 0.5f;
+    private Vector3 sestNavTarget;
 
 
     private  Camera _camera;
@@ -94,12 +99,18 @@ public class Player : MonoBehaviour
         GetInput();
         if (!isDead)
         {
-            Move();
-            Turn();
-            Jump();
-            Attack();
-            _controller.Move(moveVec * speed * Time.deltaTime);
-
+            if (isMoveNavAuto)
+            {
+                checkNavMove();
+            }
+            else
+            {
+                Move();
+                Turn();
+                Jump();
+                Attack();
+                _controller.Move(moveVec * speed * Time.deltaTime);
+            }
         }
     }
     private void FixedUpdate()
@@ -130,6 +141,11 @@ public class Player : MonoBehaviour
         a2Down = Input.GetButtonDown("Attack2");
         a3Down = Input.GetButtonDown("Attack3");
         a4Down = Input.GetButtonDown("Attack4");
+        if (isMoveNavAuto && (hAxis != 0 || vAxis != 0))
+        {
+            isMoveNavAuto = false;
+            anim.SetBool("IsRun", false);
+        }
     }
 
     private void Move()
@@ -251,9 +267,9 @@ public class Player : MonoBehaviour
     {
         //var character = CharacterManager.Instance.myCharacter;
         var character = myPlayer.myCharacter;
-        character._hp -= damage;
-        if (character._hp <= 0) character._hp = 0;
-        if (character._hp <= 0) OnDie();
+        character._hp.Value -= damage;
+        if (character._hp.Value <= 0) character._hp.Value = 0;
+        if (character._hp.Value <= 0) OnDie();
         else anim.SetTrigger("doGetHit");
     }
     void StartAttack()
@@ -266,5 +282,50 @@ public class Player : MonoBehaviour
     void EndAttack()
     {
         trailTip.GetComponent<TrailRenderer>().emitting = false;
+    }
+
+    public void GoTarget(Vector3 getTarget)
+    {
+        sestNavTarget = getTarget;
+        navAgent.isStopped = false;
+        isMoveNavAuto = true;
+        navAgent.SetDestination(getTarget);
+        navAgent.updatePosition = true;
+        navAgent.updateRotation = true;
+        anim.applyRootMotion = false;
+
+        if (!navAgent.isOnNavMesh)
+        {
+            Debug.LogError("❌ NavMeshAgent가 NavMesh 위에 있지 않습니다!");
+        }
+       
+    }
+
+    private void checkNavMove()
+    {
+        float distance = Vector3.Distance(transform.position, sestNavTarget);
+        anim.SetBool("IsRun", true);
+
+        if (distance < stopDistance)
+        {
+            navAgent.isStopped = true;
+            isMoveNavAuto = false;
+            anim.SetBool("IsRun", false);
+        }
+        else
+        {
+            navAgent.SetDestination(sestNavTarget);
+            if (navAgent.hasPath)
+            {
+                Vector3 direction = sestNavTarget - transform.position;
+                direction.y = 0; // 수직 방향 제거
+                direction.Normalize();
+                if (direction != Vector3.zero)
+                {
+                    // 한 번에 방향 전환
+                    transform.rotation = Quaternion.LookRotation(direction);
+                }
+            }
+        }
     }
 }

@@ -33,7 +33,20 @@ func Login(c *gin.Context) {
 			return
 		}
 		var getplayerinfo GetPlayerInfo = GetCharacterInfo(id, getUserName)
-		c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Login successful", "playerinfo": getplayerinfo, "charaterID": characterID})
+
+		jwtToken, err := GenerateJWT(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "JWT generation failed"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":     "success",
+			"message":    "Login successful",
+			"token":      jwtToken,
+			"playerinfo": getplayerinfo,
+			"charaterID": characterID,
+		})
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Invalid username or password"})
 		return

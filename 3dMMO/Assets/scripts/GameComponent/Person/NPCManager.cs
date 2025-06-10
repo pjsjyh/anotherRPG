@@ -29,7 +29,14 @@ public class NPCManager : MonoBehaviour
             Debug.Log($"📝 NPC {npcID} 상태 변경: {state}");
         }
     }
-
+    public Vector3 GetNPCpos(string npcID)
+    {
+        if (npcDictionary.TryGetValue(npcID, out InteractPlayer npc))
+        {
+            return npc.transform.position;
+        }
+        return this.transform.position;
+    }
     public npcState GetNPCState(string npcID)
     {
         if (npcDictionary.TryGetValue(npcID, out InteractPlayer npc))
