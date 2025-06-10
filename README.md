@@ -12,7 +12,7 @@
 개발자 1인
 
 #### 실행 영상
-https://www.youtube.com/watch?v=48EXLYf6Gxs
+https://youtu.be/XW64HEdqGC8
 
 
 
