@@ -28,9 +28,8 @@ https://youtu.be/XW64HEdqGC8
    - 상태 패턴을 활용해 게임 관리
      - enum과 switch를 활용한 게임 관리 [몬스터 스크립트](https://github.com/pjsjyh/anotherRPG/blob/main/3dMMO/Assets/scripts/GameComponent/Monster/Monster.cs)
 4) 효율적인 코드 구성
-   - 인터페이스, 상속을 활용해 코드 분리 및 유지보수성 향상 [상속을 이용한 공격코드](https://github.com/pjsjyh/ProtectTeeth/blob/master/ProtectTeeth/Assets/Scripts/Game/GoodTeethSetting.cs) [공통 코드](https://github.com/pjsjyh/ProtectTeeth/blob/master/ProtectTeeth/Assets/Scripts/Game/GoodSetting.cs)
-   - static을 활용해 데이터 관리
-   - 공통 로직 묶어 활용도 향상
+   - 기능별 책임 분리를 통해 유지보수성 확보 [기능을 메서드로 구분하여 확장이 용이하도록 설계](https://github.com/pjsjyh/anotherRPG/blob/main/3dMMO/Assets/scripts/Quest/QuestManager.cs)
+   - UniRx를 활용해 상태 변화에 따른 UI 자동 갱신 [데이터 셋팅](https://github.com/pjsjyh/anotherRPG/blob/main/3dMMO/Assets/scripts/GameComponent/Player/CharacterInfo.cs)
 5) 데이터 관리
    - 데이터 소실을 고려한 로컬 저장 [로컬 저장 스크립트](https://github.com/pjsjyh/anotherRPG/blob/main/3dMMO/Assets/scripts/GameComponent/Player/CharacterRepository.cs)
   
