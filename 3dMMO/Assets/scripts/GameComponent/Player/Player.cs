@@ -265,11 +265,8 @@ public class Player : MonoBehaviour
     }
     public void TakeDamage(int damage)
     {
-        //var character = CharacterManager.Instance.myCharacter;
-        var character = myPlayer.myCharacter;
-        character._hp.Value -= damage;
-        if (character._hp.Value <= 0) character._hp.Value = 0;
-        if (character._hp.Value <= 0) OnDie();
+        myPlayer.TakeDamage(damage);
+        if (myPlayer.GetHp() <= 0) OnDie();
         else anim.SetTrigger("doGetHit");
     }
     void StartAttack()

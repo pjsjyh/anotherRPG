@@ -2,8 +2,11 @@ package quest
 
 import (
 	"Server/db"
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -20,6 +23,17 @@ type QuestData struct {
 func AddQuestID(c *gin.Context) {
 	quest_id := c.PostForm("quest_id")
 	character_id := c.PostForm("character_id")
+	progress_detail := c.PostForm("progress_detail")
+	parts := strings.Split(progress_detail, ":")
+	var currentAmount, requiredAmount int
+	if len(parts) == 2 {
+		var err1, err2 error
+		currentAmount, err1 = strconv.Atoi(parts[0])
+		requiredAmount, err2 = strconv.Atoi(parts[1])
+		if err1 != nil || err2 != nil {
+			// 에러 처리
+		}
+	}
 
 	if db.DB == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Database not initialized"})
@@ -65,7 +79,8 @@ SELECT EXISTS(
 		c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "Quest already assigned to character"})
 		return
 	}
-	progressJson := `{"current": 0}`
+	progressJson := fmt.Sprintf(`{"current": %d, "goal": %d}`, currentAmount, requiredAmount)
+
 	// 4. 퀘스트 추가
 	characterQuestID := uuid.New().String()
 	log.Println("🧪 INSERT 실행 전:", characterQuestID, character_id, quest_id)

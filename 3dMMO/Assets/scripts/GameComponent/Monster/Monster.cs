@@ -134,7 +134,7 @@ public abstract class Monster : MonoBehaviour
                 monsterAnim.ResetTrigger("isFollow");
                 MonsterDead();
                 var myPlayer = PlayerManager.Instance.GetMyCharacterData();
-                myPlayer.myCharacter._money.Value += reward;
+                myPlayer.myCharacter.SetMoney(myPlayer.myCharacter.GetMoney() + reward);
             }
             else
             {
@@ -210,8 +210,13 @@ public abstract class Monster : MonoBehaviour
 
         isDead = true;
         monsterAnim.SetTrigger("doDie");
-        Invoke(nameof(DestroyMonster), 2f);
+        Invoke(nameof(StartDissolve), 1f);
+        //Invoke(nameof(DestroyMonster), 2f);
         QuestManager.Instance.OnMonsterKilled(monster_id);
+    }
+    private void StartDissolve()
+    {
+        GetComponent<MonsterDissolver>()?.TriggerDissolve();
     }
     protected void DestroyMonster()
     {

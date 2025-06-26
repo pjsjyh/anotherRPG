@@ -32,18 +32,25 @@ public class MyInfoSetting : MonoBehaviour
         var myPlayer = PlayerManager.Instance.GetMyCharacterData();
 
         // 기본 능력치 바인딩
-        myPlayer.myCharacterOther._attack.Subscribe(value => statsTexts[0].text = value.ToString()).AddTo(disposables);
-        myPlayer.myCharacterOther._defense.Subscribe(value => statsTexts[1].text = value.ToString()).AddTo(disposables);
-        myPlayer.myCharacter._hp.Subscribe(value => statsTexts[2].text = value.ToString()).AddTo(disposables);
-        myPlayer.myCharacter._mp.Subscribe(value => statsTexts[3].text = value.ToString()).AddTo(disposables);
-        myPlayer.myCharacterOther._critical.Subscribe(value => statsTexts[4].text = value.ToString()).AddTo(disposables);
-        myPlayer.myCharacterOther._speed.Subscribe(value => statsTexts[5].text = value.ToString()).AddTo(disposables);
-        myPlayer.myCharacterOther._luck.Subscribe(value => statsTexts[6].text = value.ToString()).AddTo(disposables);
-        myPlayer.myCharacter._money.Subscribe(value => statsTexts[7].text = value.ToString()).AddTo(disposables);
-        myPlayer.myCharacterOther._gem.Subscribe(value => statsTexts[8].text = value.ToString()).AddTo(disposables);
+        var statBindings = new (ReactiveProperty<int> stat, TextMeshProUGUI text)[]
+        {
+            (myPlayer.myCharacterOther._attack.Value,   statsTexts[0]),
+            (myPlayer.myCharacterOther._defense.Value,  statsTexts[1]),
+            (myPlayer.myCharacter._hp.Value,            statsTexts[2]),
+            (myPlayer.myCharacter._mp.Value,            statsTexts[3]),
+            (myPlayer.myCharacterOther._critical.Value, statsTexts[4]),
+            (myPlayer.myCharacterOther._speed.Value,    statsTexts[5]),
+            (myPlayer.myCharacterOther._luck.Value,     statsTexts[6]),
+            (myPlayer.myCharacter._money.Value,         statsTexts[7]),
+            (myPlayer.myCharacterOther._gem.Value,      statsTexts[8]),
+        };
 
+        foreach (var (stat, text) in statBindings)
+        {
+            stat.Subscribe(value => text.text = value.ToString()).AddTo(disposables);
+        }
         nameText.text = myPlayer._username;
-        myPlayer.myCharacter._level.Subscribe(value => levelText.text = "Lv." + value.ToString()).AddTo(disposables);
+        myPlayer.myCharacter._level.Value.Subscribe(value => levelText.text = "Lv." + value.ToString()).AddTo(disposables);
     }
     private void OnDisable()
     {

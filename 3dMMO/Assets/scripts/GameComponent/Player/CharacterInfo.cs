@@ -4,22 +4,61 @@ using UnityEngine;
 using UniRx;
 namespace CharacterInfo
 {
+    public class Stat
+    {
+        public ReactiveProperty<int> Value { get; private set; }
+
+        public Stat(int initial)
+        {
+            Value = new(initial);
+        }
+        public int Get() => Value.Value;
+        public void Set(int value) => Value.Value = value;
+        public void Add(int amount) => Value.Value += amount;
+        public void Sub(int amount) => Value.Value = Mathf.Max(0, Value.Value - amount);
+        public bool IsZero() => Value.Value <= 0;
+    }
     public class ChaInfo
     {
-        public ReactiveProperty<int> _hp = new(100);
-        public ReactiveProperty<int> _mp = new(50);
-        public ReactiveProperty<int> _money = new(1000);
-        public ReactiveProperty<int> _level = new(1);
+        public Stat _hp = new(100);
+        public Stat _mp = new(50);
+        public Stat _money = new(1000);
+        public Stat _level = new(1);
+
+        public void SetHp(int value) => _hp.Set(value);
+        public void SetMp(int value) => _mp.Set(value);
+        public void SetMoney(int value) => _money.Set(value);
+        public void SetLevel(int value) => _level.Set(value);
+
+        public int GetHp() => _hp.Get();
+        public int GetMp() => _mp.Get();
+        public int GetMoney() => _money.Get();
+        public int GetLevel() => _level.Get();
+        public bool IsDead() => _hp.IsZero();
     }
 
     public class ChaInfoOther
     {
-        public ReactiveProperty<int> _attack = new(10);
-        public ReactiveProperty<int> _defense = new(5);
-        public ReactiveProperty<int> _critical = new(1);
-        public ReactiveProperty<int> _speed = new(3);
-        public ReactiveProperty<int> _luck = new(2);
-        public ReactiveProperty<int> _gem = new(0);
+        public Stat _attack = new(10);
+        public Stat _defense = new(5);
+        public Stat _critical = new(1);
+        public Stat _speed = new(3);
+        public Stat _luck = new(2);
+        public Stat _gem = new(0);
+
+        public void SetAttack(int value) => _attack.Set(value);
+        public void SetDefense(int value) => _defense.Set(value);
+        public void SetCritical(int value) => _critical.Set(value);
+        public void SetSpeed(int value) => _speed.Set(value);
+        public void SetLuck(int value) => _luck.Set(value);
+        public void SetGem(int value) => _gem.Set(value);
+
+        public int GetAttack() => _attack.Get();
+        public int GetDefense() => _defense.Get();
+        public int GetCritical() => _critical.Get();
+        public int GetSpeed() => _speed.Get();
+        public int GetLuck() => _luck.Get();
+        public int GetGem() => _gem.Get();
     }
 
     public class CharacterPersonalInfo
@@ -73,12 +112,12 @@ namespace CharacterInfo
         {
             ChaInfoOther managerInfo = new ChaInfoOther
             {
-                _attack = new ReactiveProperty<int>(9999),
-                _defense = new ReactiveProperty<int>(9999),
-                _critical = new ReactiveProperty<int>(9999),
-                _speed = new ReactiveProperty<int>(100),
-                _luck = new ReactiveProperty<int>(9999),
-                _gem = new ReactiveProperty<int>(0)
+                _attack = new Stat(9999),
+                _defense = new Stat(9999),
+                _critical = new Stat(9999),
+                _speed = new Stat(100),
+                _luck = new Stat(9999),
+                _gem = new Stat(0)
             };
 
             InitializePlayer(managerInfo, "manager", 100, 100, 999999, 999, new float[] { 0, 0, 0 }, new float[] { 0, 0, 0 }, "MainFirst", "MainSecond");
@@ -87,10 +126,10 @@ namespace CharacterInfo
        
         public void InitializePlayer(ChaInfoOther playerInfo, string username, int hp, int mp, int money, int level, float[] position, float[] rotation, string currentStory, string nextStory)
         {
-            myCharacter._hp.Value = hp;
-            myCharacter._mp.Value = mp;
-            myCharacter._money.Value = money;
-            myCharacter._level.Value = level;
+            myCharacter._hp.Set(hp);
+            myCharacter._mp.Set(mp);
+            myCharacter._money.Set(money);
+            myCharacter._level.Set(level);
             myCharacterOther = playerInfo;
             _username = username;
             characterPersonalinfo.chaPosition = position;
@@ -126,8 +165,18 @@ namespace CharacterInfo
 
         public void GetMoneyReward(int reward)
         {
-            myCharacter._money.Value += reward;
+            myCharacter._money.Add(reward);
         }
+
+        public void TakeDamage(int damage)
+        {
+            myCharacter._hp.Sub(damage);
+        }
+        public int GetHp()
+        {
+            return myCharacter._hp.Get();
+        }
+
     }
 
 

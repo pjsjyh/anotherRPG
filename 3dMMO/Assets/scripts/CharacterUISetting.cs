@@ -63,7 +63,7 @@ public class CharacterUISetting : MonoBehaviour
     private void BindUI()
     {
         // HP 텍스트와 HP 바
-        myPlayer.myCharacter._hp
+        myPlayer.myCharacter._hp.Value
             .Subscribe(hp =>
             {
                 playerHealthText.text = $"{hp} / 100";
@@ -72,14 +72,14 @@ public class CharacterUISetting : MonoBehaviour
             }).AddTo(disposables);
 
         // 레벨
-        myPlayer.myCharacter._level
+        myPlayer.myCharacter._level.Value
             .Subscribe(level =>
             {
                 playerLevelText.text = level.ToString();
             }).AddTo(disposables);
 
         // 코인
-        myPlayer.myCharacter._money
+        myPlayer.myCharacter._money.Value
             .Subscribe(money =>
             {
                 playerCoinText.text = string.Format("{0:n0}", money);

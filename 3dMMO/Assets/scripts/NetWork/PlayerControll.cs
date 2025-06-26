@@ -66,9 +66,9 @@ public class PlayerControll : NetworkBehaviour
         if (Runner.IsServer && ServerPlayerDataStore.AllPlayerData.TryGetValue(Object.InputAuthority, out var data))
         {
             RPC_SetCharacterData(
-                data.myCharacter._hp.Value, data.myCharacter._mp.Value, data.myCharacter._money.Value, data.myCharacter._level.Value,
-                data.myCharacterOther._attack.Value, data.myCharacterOther._defense.Value, data.myCharacterOther._critical.Value,
-                data.myCharacterOther._speed.Value, data.myCharacterOther._luck.Value, data.myCharacterOther._gem.Value,
+                data.myCharacter.GetHp(), data.myCharacter.GetMp(), data.myCharacter.GetMoney(), data.myCharacter.GetLevel(),
+                data.myCharacterOther.GetAttack(), data.myCharacterOther.GetDefense(), data.myCharacterOther.GetCritical(),
+                data.myCharacterOther.GetSpeed(), data.myCharacterOther.GetLuck(), data.myCharacterOther.GetGem(),
                 data._username
             );
             Debug.Log(data._username);
@@ -125,17 +125,17 @@ public class PlayerControll : NetworkBehaviour
         if (!Object.HasInputAuthority)
         {
             myData = new CharacterManager();
-            myData.myCharacter._hp.Value = hp;
-            myData.myCharacter._mp.Value = mp;
-            myData.myCharacter._money.Value = money;
-            myData.myCharacter._level.Value = level;
+            myData.myCharacter.SetHp(hp);
+            myData.myCharacter.SetMp(mp);
+            myData.myCharacter.SetMoney(money);
+            myData.myCharacter.SetLevel(level);
 
-            myData.myCharacterOther._attack.Value = atk;
-            myData.myCharacterOther._defense.Value = def;
-            myData.myCharacterOther._critical.Value = cri;
-            myData.myCharacterOther._speed.Value = spd;
-            myData.myCharacterOther._luck.Value = luck;
-            myData.myCharacterOther._gem.Value = gem;
+            myData.myCharacterOther.SetAttack(atk);
+            myData.myCharacterOther.SetDefense(def);
+            myData.myCharacterOther.SetCritical(cri);
+            myData.myCharacterOther.SetSpeed(spd);
+            myData.myCharacterOther.SetLuck(luck);
+            myData.myCharacterOther.SetGem(gem);
 
             myData._username = username;
             this.name = username;

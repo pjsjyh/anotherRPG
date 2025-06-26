@@ -45,12 +45,12 @@ namespace SettingAccountManager
                 // 기본값
                 characterData = new ChaInfoOther
                 {
-                    _attack = new ReactiveProperty<int>(1),
-                    _defense = new ReactiveProperty<int>(1),
-                    _critical = new ReactiveProperty<int>(1),
-                    _speed = new ReactiveProperty<int>(1),
-                    _luck = new ReactiveProperty<int>(1),
-                    _gem = new ReactiveProperty<int>(0)
+                    _attack = new Stat(1),
+                    _defense = new Stat(1),
+                    _critical = new Stat(1),
+                    _speed = new Stat(1),
+                    _luck = new Stat(1),
+                    _gem = new Stat(0)
                 };
             }
             else
@@ -65,12 +65,12 @@ namespace SettingAccountManager
 
                 characterData = new ChaInfoOther
                 {
-                    _attack = new ReactiveProperty<int>(raw._attack),
-                    _defense = new ReactiveProperty<int>(raw._defense),
-                    _critical = new ReactiveProperty<int>(raw._critical),
-                    _speed = new ReactiveProperty<int>(raw._speed),
-                    _luck = new ReactiveProperty<int>(raw._luck),
-                    _gem = new ReactiveProperty<int>(raw._gem)
+                    _attack = new Stat(raw._attack),
+                    _defense = new Stat(raw._defense),
+                    _critical = new Stat(raw._critical),
+                    _speed = new Stat(raw._speed),
+                    _luck = new Stat(raw._luck),
+                    _gem = new Stat(raw._gem)
                 };
             }
 
@@ -119,10 +119,10 @@ namespace SettingAccountManager
             // 나머지 기본 정보
             loginData._username = playerName;
             loginData.myCharacterOther = characterData; // 필요에 따라 채워넣기
-            loginData.myCharacter._hp.Value = playerHP;
-            loginData.myCharacter._mp.Value = playerMp;
-            loginData.myCharacter._level.Value = playerLevel;
-            loginData.myCharacter._money.Value = playerMoney;
+            loginData.myCharacter.SetHp(playerHP);
+            loginData.myCharacter.SetMp(playerMp);
+            loginData.myCharacter.SetLevel(playerLevel);
+            loginData.myCharacter.SetMoney(playerMoney);
 
             // 전역 저장
             LoginResultData.LocalCharacterData = loginData;

@@ -39,9 +39,7 @@ public class MonsterArea : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Animator playerAnim = other.GetComponent<Animator>();
-            var character = myPlayer.myCharacter;
-            Debug.Log("hp" + character._hp);
-            if (character._hp.Value > 0)
+            if (myPlayer.GetHp() > 0)
                 StartCoroutine(GetHit(playerAnim, other));
 
             colid.enabled = false;

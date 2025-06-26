@@ -92,19 +92,19 @@ public class GameDataManager : MonoBehaviour
         var myPlayer = PlayerManager.Instance.GetMyCharacterData();
         //myPlayer.playerObj.GetComponent<Player>().SavePositionRotation();
         chaData.character_id = myPlayer.characterPersonalinfo.charater_id;
-        chaData.hp = myPlayer.myCharacter._hp.Value;
-        chaData.mp = myPlayer.myCharacter._mp.Value;
-        chaData.money = myPlayer.myCharacter._money.Value;
-        chaData.level = myPlayer.myCharacter._level.Value;
+        chaData.hp = myPlayer.myCharacter.GetHp();
+        chaData.mp = myPlayer.myCharacter.GetMp();
+        chaData.money = myPlayer.myCharacter.GetMoney();
+        chaData.level = myPlayer.myCharacter.GetLevel();
         chaData.storynum = myPlayer.characterPersonalinfo.storyNum;
         var raw = new RawChaInfoOther
         {
-            _attack = myPlayer.myCharacterOther._attack.Value,
-            _defense = myPlayer.myCharacterOther._defense.Value,
-            _critical = myPlayer.myCharacterOther._critical.Value,
-            _speed = myPlayer.myCharacterOther._speed.Value,
-            _luck = myPlayer.myCharacterOther._luck.Value,
-            _gem = myPlayer.myCharacterOther._gem.Value
+            _attack = myPlayer.myCharacterOther.GetAttack(),
+            _defense = myPlayer.myCharacterOther.GetDefense(),
+            _critical = myPlayer.myCharacterOther.GetCritical(),
+            _speed = myPlayer.myCharacterOther.GetSpeed(),
+            _luck = myPlayer.myCharacterOther.GetLuck(),
+            _gem = myPlayer.myCharacterOther.GetGem()
         };
         chaData.attributes = JsonConvert.SerializeObject(raw);
         float[] pos = myPlayer.characterPersonalinfo.chaPosition;
